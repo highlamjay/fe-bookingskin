@@ -5,6 +5,8 @@ import { BrowserRouter } from 'react-router-dom'; // Import BrowserRouter
 import Home from './components/Home.jsx'; // Giả sử bạn có một file App.js để định nghĩa các route
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
+import ForgotPassword from './components/ForgotPassword.jsx';
+import Products from './components/Products.jsx';
 import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -15,6 +17,8 @@ root.render(
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} /> 
+        <Route path="/products" element={<Products />} /> 
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </BrowserRouter>
