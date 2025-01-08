@@ -1,23 +1,38 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaGoogle, FaFacebook } from 'react-icons/fa';
+import { useState, useEffect } from 'react'
+import {Link} from 'react-router-dom'
+import { useSearchParams } from 'next/navigation'
+import { FaGoogle, FaFacebook } from 'react-icons/fa'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams && searchParams.get('registered') === 'true') {
+      setShowSuccessMessage(true)
+      const timer = setTimeout(() => setShowSuccessMessage(false), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [searchParams])
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempted with:', email, password);
-  };
+    e.preventDefault()
+    console.log('Login attempted with:', email, password)
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+        {showSuccessMessage && (
+          <div className="mb-4 p-2 bg-green-100 text-green-700 rounded">
+            Registration successful! You can now log in.
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <input
@@ -66,5 +81,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,19 +1,30 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function RegisterPage() {
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle registration logic here
-    console.log('Registration attempted with:', email, username, password, confirmPassword);
-  };
+    e.preventDefault()
+
+    // Kiểm tra xem mật khẩu và xác nhận mật khẩu có khớp không
+    if (password !== confirmPassword) {
+      alert("Mật khẩu không khớp. Vui lòng thử lại.")
+      return
+    }
+
+    // Tạo mã xác nhận ngẫu nhiên
+    const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString()
+    console.log('Confirmation code:', confirmationCode)
+
+    // Điều hướng đến trang xác nhận với email và mã xác nhận
+    window.location.href = `/confirm?email=${encodeURIComponent(email)}&code=${confirmationCode}`
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -64,7 +75,9 @@ export default function RegisterPage() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
+            <Link to="/confirm" className="text-blue-600 text-white hover:underline">
             Register
+          </Link>
           </button>
         </form>
         <p className="mt-4 text-sm text-center">
@@ -75,5 +88,5 @@ export default function RegisterPage() {
         </p>
       </div>
     </div>
-  );
+  )
 }
