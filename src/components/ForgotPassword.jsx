@@ -1,18 +1,33 @@
-'use client'
-
-import { useState } from 'react'
-import {Link} from 'react-router-dom'
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmNewPassword, setConfirmNewPassword] = useState('')
+  const [email, setEmail] = useState('');
+  const [confirmationCode, setConfirmationCode] = useState('');
+  const [timeLeft, setTimeLeft] = useState(90);
+  const navigate = useNavigate();
+
+  const handleSendCode = () => {
+    // Gửi mã xác nhận đến email
+    console.log('Sending code to:', email);
+    
+    // Bắt đầu đếm ngược
+    let timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        if (prevTime <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    // Handle password reset logic here
-    console.log('Password reset attempted with:', email, newPassword, confirmNewPassword)
-  }
+    e.preventDefault();
+    // Chuyển đến trang nhập mật khẩu mới
+    navigate('/confirm', { state: { email, confirmationCode } });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -26,43 +41,46 @@ export default function ForgotPasswordPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
           </div>
           <div>
-            <input
-              type="password"
-              placeholder="New Password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <button
+              type="button"
+              onClick={handleSendCode}
+              className="w-full bg-blue-600 text-white py-2 rounded-md"
+            >
+              Send Code
+            </button>
           </div>
           <div>
             <input
-              type="password"
-              placeholder="Confirm New Password"
-              value={confirmNewPassword}
-              onChange={(e) => setConfirmNewPassword(e.target.value)}
+              type="text"
+              placeholder="Mã Xác Nhận"
+              value={confirmationCode}
+              onChange={(e) => setConfirmationCode(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              disabled={timeLeft === 0}
             />
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600">Time: {timeLeft} s</span>
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-full bg-blue-600 text-white py-2 rounded-md"
+            disabled={timeLeft === 0}
           >
-            Reset Password
+            Confirm
           </button>
         </form>
         <div className="mt-4 text-center">
           <Link to="/login" className="text-blue-600 hover:underline">
-            Back to Login Page
+            Back To Login
           </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }
-

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const products = [
     { id: 1, name: 'Product 1', price: 19.99, image: '/placeholder.svg' },
     { id: 2, name: 'Product 2', price: 29.99, image: '/placeholder.svg' },
@@ -22,9 +24,9 @@ const products = [
             <div className="p-4">
               <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
               <p className="text-gray-600">${product.price.toFixed(2)}</p>
-              <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Add to Cart
-              </button>
+              <Link to={`/products-id`} className="mt-4 block w-full bg-blue-600 text-white py-2 text-center rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+              View Details
+            </Link>
             </div>
           </div>
         ))}
