@@ -22,8 +22,8 @@ export default function NewPasswordPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <input
-              type="New Password"
-              placeholder="Mật Khẩu Mới"
+              type="password"
+              placeholder="New Password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required

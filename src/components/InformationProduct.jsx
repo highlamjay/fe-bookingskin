@@ -28,7 +28,7 @@ export default function ProductDetail() {
     <div className="min-h-screen flex flex-col bg-gray-100">
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-8 mt-8">
             <video 
               src={product.videoUrl} 
               controls 
