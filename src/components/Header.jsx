@@ -12,14 +12,14 @@ export default function Header() {
   const pathname = window.location.pathname;
 
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-white bg-transparent fixed w-full z-10">
       <div className="container flex justify-between items-center">
         <nav>
           <ul className="flex">
             <li>
               <Link
                 to="/"
-                className={`flex h-12 items-center justify-center ${pathname === '/' ? 'bg-blue-600 text-white' : 'text-gray-700'} hover:bg-blue-600 hover:text-white transition duration-200 px-4`}
+                className={`flex h-12 items-center justify-center ${pathname === '/' ? 'bg-gray-600 text-white' : 'text-gray-700'} hover:bg-gray-600 hover:text-white transition duration-200 px-4`}
               >
                 Home
               </Link>
@@ -27,7 +27,7 @@ export default function Header() {
             <li>
               <Link
                 to="/products"
-                className={`flex h-12 items-center justify-center ${pathname === '/products' ? 'bg-blue-600 text-white' : 'text-gray-700'} hover:bg-blue-600 hover:text-white transition duration-200 px-4`}
+                className={`flex h-12 items-center justify-center ${pathname === '/products' ? 'bg-gray-600 text-white' : 'text-gray-700'} hover:bg-gray-600 hover:text-white transition duration-200 px-4`}
               >
                 Products
               </Link>
@@ -35,7 +35,7 @@ export default function Header() {
             <li>
               <Link
                 to="/exchanges"
-                className={`flex h-12 items-center justify-center ${pathname === '/exchanges' ? 'bg-blue-600 text-white' : 'text-gray-700'} hover:bg-blue-600 hover:text-white transition duration-200 px-4`}
+                className={`flex h-12 items-center justify-center ${pathname === '/exchanges' ? 'bg-gray-600 text-white' : 'text-gray-700'} hover:bg-gray-600 hover:text-white transition duration-200 px-4`}
               >
                 Exchanges
               </Link>
@@ -43,7 +43,7 @@ export default function Header() {
             <li>
               <Link
                 to="/information"
-                className={`flex h-12 items-center justify-center ${pathname === '/information' ? 'bg-blue-600 text-white' : 'text-gray-700'} hover:bg-blue-600 hover:text-white transition duration-200 px-4`}
+                className={`flex h-12 items-center justify-center ${pathname === '/information' ? 'bg-gray-600 text-white' : 'text-gray-700'} hover:bg-gray-600 hover:text-white transition duration-200 px-4`}
               >
                 Information
               </Link>
@@ -66,7 +66,7 @@ export default function Header() {
           ) : (
             <div className="space-x-4">
               <Link to="/login" className="text-blue-600 hover:text-blue-800">Login</Link>
-              <Link to="/register" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Register</Link>
+              <Link to="/register" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Register</Link>
             </div>
           )}
         </div>
