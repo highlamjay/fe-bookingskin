@@ -9,7 +9,8 @@ import ForgotPassword from './components/ForgotPassword.jsx';
 import Products from './components/Products.jsx';
 import Confirm from './components/Confirm.jsx';
 import InformationProduct from './components/InformationProduct.jsx';
-import UserInfo from './components/UserInfo.jsx'
+import UserInfo from './components/UserInfo.jsx';
+import Buy from './components/Buy.jsx';
 import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -25,6 +26,7 @@ root.render(
         <Route path="/confirm" element={<Confirm />} />
         <Route path="/products-id" element={<InformationProduct />} />
         <Route path="/user-info" element={<UserInfo />} />
+        <Route path="/buy" element={<Buy />} />
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </BrowserRouter>

@@ -11,15 +11,20 @@ const user = {
   avatar: '/avatar-placeholder.png',
   balance: 1000,
   transactions: [
-    { id: 1, date: '2023-06-01', description: 'Purchase', amount: -50 },
-    { id: 2, date: '2023-06-05', description: 'Deposit', amount: 200 },
-    { id: 3, date: '2023-06-10', description: 'Purchase', amount: -30 },
+    { id: 1, date: '2023-06-01', description: 'Purchase', amount: -50, details: 'Product A - Quantity: 1' },
+    { id: 2, date: '2023-06-05', description: 'Deposit', amount: 200, details: 'Bank transfer' },
+    { id: 3, date: '2023-06-10', description: 'Purchase', amount: -30, details: 'Product B - Quantity: 2' },
   ]
 }
 
 export default function UserInfoPage() {
-  const [showDepositModal, setShowDepositModal] = useState(false)
-  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
+  const [showDepositModal, setShowDepositModal] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+
+  const openTransactionModal = (transaction) => {
+    setSelectedTransaction(transaction);
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
@@ -75,7 +80,7 @@ export default function UserInfoPage() {
                   </thead>
                   <tbody>
                     {user.transactions.map((transaction) => (
-                      <tr key={transaction.id} className="border-b">
+                      <tr key={transaction.id} className="border-b cursor-pointer hover:bg-gray-50" onClick={() => openTransactionModal(transaction)}>
                         <td className="py-2">{transaction.date}</td>
                         <td className="py-2">{transaction.description}</td>
                         <td className={`py-2 ${transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -90,6 +95,15 @@ export default function UserInfoPage() {
           </div>
         </div>
       </main>
+      {/* Đăng xuất */}
+      <div className="flex justify-center p-4">
+        <button
+          className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          onClick={() => alert('Logged out')}
+        >
+          Log Out
+        </button>
+      </div>
       {/* Deposit Modal */}
       {showDepositModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -114,6 +128,28 @@ export default function UserInfoPage() {
             <button
               onClick={() => setShowChangePasswordModal(false)}
               className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Transaction Details Modal */}
+      {selectedTransaction && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-lg max-w-md w-full">
+            <h2 className="text-2xl font-bold mb-4">Transaction Details</h2>
+            <div className="space-y-2">
+              <p><strong>Date:</strong> {selectedTransaction.date}</p>
+              <p><strong>Description:</strong> {selectedTransaction.description}</p>
+              <p><strong>Amount:</strong> <span className={selectedTransaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}>
+                ${Math.abs(selectedTransaction.amount).toFixed(2)}
+              </span></p>
+              <p><strong>Details:</strong> {selectedTransaction.details}</p>
+            </div>
+            <button
+              onClick={() => setSelectedTransaction(null)}
+              className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Close
             </button>
