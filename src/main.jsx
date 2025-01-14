@@ -12,10 +12,16 @@ import InformationProduct from './components/InformationProduct.jsx';
 import UserInfo from './components/UserInfo.jsx';
 import Buy from './components/Buy.jsx';
 import './index.css';
+import { store } from "./redux/store.js";
+import { Provider } from "react-redux";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
     <BrowserRouter>
     <Routes>
         <Route path="/" element={<Home />} />
@@ -30,5 +36,6 @@ root.render(
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>
+  </Provider>
+  </QueryClientProvider>
 );
