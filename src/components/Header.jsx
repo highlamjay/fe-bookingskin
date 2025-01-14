@@ -12,7 +12,7 @@ export default function Header() {
   const pathname = window.location.pathname;
 
   return (
-    <header className="bg-white bg-transparent fixed w-full z-10">
+    <header className="bg-white bg-opacity-0 fixed w-full z-10">
       <div className="container flex justify-between items-center">
         <nav>
           <ul className="flex">
