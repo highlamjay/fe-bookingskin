@@ -18,7 +18,7 @@ export default function ChuyenHinhAnh() {
   }, []);
 
   return (
-    <div className="relative w-full h-[calc(100vh-80px)]">
+    <div className="relative w-full h-screen"> 
       <img
         src={images[currentImage]}
         alt="Carousel Image"
