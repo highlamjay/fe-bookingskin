@@ -25,7 +25,7 @@ export default function Buy() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="flex-grow container mx-auto px-4 py-8 mt-8">
         <div className="bg-white rounded-lg shadow-md overflow-hidden p-6">
           <h1 className="text-3xl font-bold mb-6 text-center">Purchase Confirmation</h1>
           <div className="flex flex-col md:flex-row items-center justify-center">
