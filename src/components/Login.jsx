@@ -1,15 +1,33 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import { useSearchParams } from 'next/navigation'
 import { FaGoogle, FaFacebook } from 'react-icons/fa'
+import { useMutation } from '@tanstack/react-query'
+import { loginUser } from '../services/auth-service'
+import * as Alert from '../components/Alert'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const searchParams = useSearchParams()
+  const navigate = useNavigate();
+
+  const mutationLogin = useMutation({
+    mutationFn: async (data) => {
+      return await loginUser(data);
+    },
+    onSuccess: (data) => {
+      console.log('Login successful:', data)
+      Alert.success(data.message);
+      navigate('/');
+    },
+    onError: (error) => {
+      console.error('Login failed:', error)
+    }
+  })
 
   useEffect(() => {
     if (searchParams && searchParams.get('registered') === 'true') {
@@ -21,7 +39,7 @@ export default function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('Login attempted with:', email, password)
+    mutationLogin.mutate({ email: email, password: password})
   }
 
   return (

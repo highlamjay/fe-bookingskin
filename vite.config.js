@@ -12,4 +12,13 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'), // Thiết lập alias @ cho thư mục src
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://be-bookingskin.onrender.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
 });

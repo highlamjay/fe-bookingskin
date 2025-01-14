@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function Header() {
   // Giả lập trạng thái đăng nhập và thông tin người dùng
-  const [isLoggedIn] = useState(true); // Đặt là true để mô phỏng
+  const [isLoggedIn] = useState(false); // Đặt là true để mô phỏng
   const user = {
     name: 'John Doe',
     avatar: '/avatar-placeholder.png', // Thay thế bằng đường dẫn hình ảnh avatar thực tế
