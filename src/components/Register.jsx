@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { registerUser } from '../services/auth-service'
+import * as Alert from '../components/Alert'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -10,21 +13,37 @@ export default function RegisterPage() {
   const [name, setName] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
+  const navigate = useNavigate();
+
+  const mutationRegister = useMutation({
+    mutationFn: async (data) => {
+      return await registerUser(data);
+    },
+    onSuccess: (data) => {
+      console.log("Data from onSuccess:", data); 
+      if (data.success === true){
+        // Điều hướng đến trang xác nhận với email và mã xác nhận
+        navigate(`/confirm-email?email=${email}`);
+      } else if(data.success === false){
+        Alert.error(data.message);
+      }
+    },
+    onError: (error) => {
+      Alert.error(error.response.data.message);
+      console.error('Registration failed:', error)
+    }
+  })
+  
+
   const handleSubmit = (e) => {
     e.preventDefault()
-
-    // Kiểm tra xem mật khẩu và xác nhận mật khẩu có khớp không
-    if (password !== confirmPassword) {
-      alert("Mật khẩu không khớp. Vui lòng thử lại.")
-      return
-    }
-
-    // Tạo mã xác nhận ngẫu nhiên
-    const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString()
-    console.log('Confirmation code:', confirmationCode)
-
-    // Điều hướng đến trang xác nhận với email và mã xác nhận
-    window.location.href = `/confirm?email=${encodeURIComponent(email)}&code=${confirmationCode}`
+    mutationRegister.mutate({ 
+      name: name, 
+      email: email, 
+      username: username, 
+      password: password, 
+      confirmPassword: confirmPassword
+    });
   }
 
   return (
@@ -86,7 +105,7 @@ export default function RegisterPage() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            <Link to="/confirm" className="text-blue-600 text-white hover:underline">
+            <Link to="/confirm" className=" text-white hover:underline">
             Register
           </Link>
           </button>
