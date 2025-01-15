@@ -12,6 +12,7 @@ export const loginUser = async (data) => {
       console.error("Failed to login user", error);
       throw error;
     }
+}
 
 export const registerUser = async (data) => {
     try {
@@ -23,5 +24,16 @@ export const registerUser = async (data) => {
       console.error("Failed to register user", error);
       throw error;
     }
+};
 
+export const forgotPassword = async (email, data) => {
+  try {
+    const response = await axios.post(
+      `${API_KEY}/auth/forgot-password?email=${email}`, data
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to forgot password user", error);
+    throw error;
+  }
 };

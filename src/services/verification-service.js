@@ -23,3 +23,15 @@ export const verifyCode = async (code) => {
     throw error;
   }
 };
+
+export const sendCode = async (email) => {
+  try {
+    const response = await axios.post(
+      `${API_KEY}/verification/send-code`, email 
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to send code again", error);
+    throw error;
+  }
+};
