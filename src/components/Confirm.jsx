@@ -1,18 +1,36 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { forgotPassword } from '../services/auth-service';
+import * as Alert from './Alert';
 
 export default function NewPasswordPage() {
   const location = useLocation();
-  const { email } = location.state || {};
+  const queryParams = new URLSearchParams(location.search);
+  const email = queryParams.get('email');
+
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
+  const navigate = useNavigate();
+
+  const mutationForgotPassword = useMutation({
+    mutationFn: async (data) => {
+      return await forgotPassword(email, data)
+    },
+    onSuccess: (data) => {
+      Alert.success(data.message);
+      navigate('/login');
+    },
+    onError: (error) => {
+      Alert.error(error.response.data.message);
+      console.error('Error forgot password:', error);
+    },
+  })
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Logic để thay đổi mật khẩu mới
-    console.log('New password:', newPassword);
-    console.log('Email:', email);
-    // Chuyển hướng hoặc xử lý sau khi thay đổi mật khẩu
+    mutationForgotPassword.mutate({newPassword: newPassword, confirmPassword: confirmNewPassword})
   };
 
   return (
