@@ -12,4 +12,16 @@ export const loginUser = async (data) => {
       console.error("Failed to login user", error);
       throw error;
     }
+
+export const registerUser = async (data) => {
+    try {
+      const response = await axios.post(
+        `${API_KEY}/auth/register`, data
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Failed to register user", error);
+      throw error;
+    }
+
 };

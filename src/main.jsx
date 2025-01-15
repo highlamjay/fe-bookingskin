@@ -18,6 +18,7 @@ import Customers from './components/admin/Customers.jsx';
 import ProductAdmin from './components/admin/Products.jsx';
 import Posts from './components/admin/Posts.jsx';
 import Revenua from './components/admin/Revenua.jsx';
+import ConfirmEmail from './components/ConfirmEmail.jsx';
 import './index.css';
 import { store } from "./redux/store.js";
 import { Provider } from "react-redux";
@@ -37,6 +38,7 @@ root.render(
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/products" element={<Products />} />
         <Route path="/confirm" element={<Confirm />} />
+        <Route path="/confirm-email" element={<ConfirmEmail />} />
         <Route path="/products-id" element={<InformationProduct />} />
         <Route path="/user-info" element={<UserInfo />} />
         <Route path="/buy" element={<Buy />} />
