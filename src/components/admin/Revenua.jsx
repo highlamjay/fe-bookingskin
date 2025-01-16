@@ -2,19 +2,20 @@
 
 import { useEffect, useRef } from 'react'
 
+// Dữ liệu doanh thu
 const mockRevenueData = [
-  { month: 'Jan', revenue: 5000 },
-  { month: 'Feb', revenue: 6200 },
-  { month: 'Mar', revenue: 7800 },
-  { month: 'Apr', revenue: 8500 },
+  { month: 'January', revenue: 5000 },
+  { month: 'February', revenue: 6200 },
+  { month: 'March', revenue: 7800 },
+  { month: 'April', revenue: 8500 },
   { month: 'May', revenue: 9200 },
-  { month: 'Jun', revenue: 10000 },
-  { month: 'Jul', revenue: 11500 },
-  { month: 'Aug', revenue: 12800 },
-  { month: 'Sep', revenue: 14000 },
-  { month: 'Oct', revenue: 15200 },
-  { month: 'Nov', revenue: 16500 },
-  { month: 'Dec', revenue: 18000 },
+  { month: 'June', revenue: 10000 },
+  { month: 'July', revenue: 11500 },
+  { month: 'August', revenue: 12800 },
+  { month: 'September', revenue: 14000 },
+  { month: 'October', revenue: 15200 },
+  { month: 'November', revenue: 16500 },
+  { month: 'December', revenue: 18000 },
 ]
 
 export default function RevenuePage() {
@@ -22,13 +23,13 @@ export default function RevenuePage() {
 
   useEffect(() => {
     if (containerRef.current) {
-      const maxRevenue = Math.max(...mockRevenueData.map(data => data.revenue))
-
-      // Xóa nội dung trước khi thêm mới
+      // Xóa nội dung cũ
       containerRef.current.innerHTML = ''
 
+      const maxRevenue = Math.max(...mockRevenueData.map(data => data.revenue))
+
       mockRevenueData.forEach((data) => {
-        const barHeight = (data.revenue / maxRevenue) * 200 // Chiều cao tối đa cho cột
+        const barHeight = (data.revenue / maxRevenue) * 200 // Chiều cao cột
         
         // Tạo div cho cột
         const bar = document.createElement('div')
