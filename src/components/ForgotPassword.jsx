@@ -1,19 +1,51 @@
-import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { sendCode, verifyCode } from '../services/verification-service';
+import * as Alert from './Alert';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [confirmationCode, setConfirmationCode] = useState('');
-  const [timeLeft, setTimeLeft] = useState(90);
+  const [timeLeft, setTimeLeft] = useState(0);  // Không khởi tạo giá trị mặc định cho timeLeft
   const navigate = useNavigate();
 
+  const mutationSendCode = useMutation({
+    mutationFn: async (data) => {
+      return await sendCode(data);
+    },
+    onSuccess: (data) => {
+      setTimeLeft(60);  // Bắt đầu đếm ngược khi mã đã được gửi thành công
+    },
+    onError: (error) => {
+      console.error('Error:', error);
+      Alert.error(error.response.data.message);
+    }
+  });
+
+  const mutationVerifyCode = useMutation({
+    mutationFn: async (data) => {
+      return await verifyCode(data);
+    },
+    onSuccess: (data) => {
+      Alert.success(data.message);
+      navigate(`/confirm?email=${email}`);
+    },
+    onError: (error) => {
+      console.error('Error:', error);
+      Alert.error(error.response.data.message);
+    }
+  });
+
   const handleSendCode = () => {
-    // Gửi mã xác nhận đến email
-    console.log('Sending code to:', email);
-    
-    // Bắt đầu đếm ngược
-    let timer = setInterval(() => {
-      setTimeLeft(prevTime => {
+    mutationSendCode.mutate({ email: email });
+  };
+
+  useEffect(() => {
+    if (timeLeft === 0) return; // Nếu thời gian hết, không thực hiện gì
+
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(timer);
           return 0;
@@ -21,12 +53,13 @@ export default function ForgotPasswordPage() {
         return prevTime - 1;
       });
     }, 1000);
-  };
+    
+    return () => clearInterval(timer); // Cleanup timer khi component unmount hoặc timeLeft thay đổi
+  }, [timeLeft]); // Chạy effect khi timeLeft thay đổi
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Chuyển đến trang nhập mật khẩu mới
-    navigate('/confirm', { state: { email, confirmationCode } });
+    mutationVerifyCode.mutate({ code: confirmationCode });
   };
 
   return (
