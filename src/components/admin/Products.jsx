@@ -1,48 +1,244 @@
 'use client'
 
 import { useState } from 'react'
-import { FaEdit, FaTrash } from 'react-icons/fa'
-import Pagination from '../Pagination' // Đảm bảo bạn đã tạo file Pagination.jsx
+import { FaEdit, FaTrash, FaEye, FaPlus } from 'react-icons/fa'
+import Pagination from '../Pagination'
 
 const mockProducts = [
-  { id: 1, name: 'Product A', price: 19.99, stock: 100, category: 'Electronics', image: 'link_to_image_1' },
-  { id: 2, name: 'Product B', price: 29.99, stock: 50, category: 'Clothing', image: 'link_to_image_2' },
-  { id: 3, name: 'Product C', price: 39.99, stock: 75, category: 'Home & Garden', image: 'link_to_image_3' },
-  // Thêm nhiều sản phẩm hơn nếu cần
+  { 
+    id: 1, 
+    name: 'Product A', 
+    image: 'link_to_image_1', 
+    releaseDate: '2023-01-01', 
+    price: 19.99, 
+    video: 'link_to_video_1',
+    story: 'Cốt truyện của sản phẩm A...' 
+  },
+  { 
+    id: 2, 
+    name: 'Product B', 
+    image: 'link_to_image_2', 
+    releaseDate: '2023-02-01', 
+    price: 29.99, 
+    video: 'link_to_video_2',
+    story: 'Cốt truyện của sản phẩm B...' 
+  },
+  { 
+    id: 3, 
+    name: 'Product C', 
+    image: 'link_to_image_3', 
+    releaseDate: '2023-03-01', 
+    price: 39.99, 
+    video: 'link_to_video_3',
+    story: 'Cốt truyện của sản phẩm C...' 
+  },
+  { 
+    id: 4, 
+    name: 'Product D', 
+    image: 'link_to_image_4', 
+    releaseDate: '2023-04-01', 
+    price: 49.99, 
+    video: 'link_to_video_4',
+    story: 'Cốt truyện của sản phẩm D...' 
+  },
+  { 
+    id: 5, 
+    name: 'Product E', 
+    image: 'link_to_image_5', 
+    releaseDate: '2023-05-01', 
+    price: 59.99, 
+    video: 'link_to_video_5',
+    story: 'Cốt truyện của sản phẩm E...' 
+  },
+  { 
+    id: 6, 
+    name: 'Product F', 
+    image: 'link_to_image_6', 
+    releaseDate: '2023-06-01', 
+    price: 69.99, 
+    video: 'link_to_video_6',
+    story: 'Cốt truyện của sản phẩm F...' 
+  },
 ]
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState(mockProducts)
-  const [setSelectedProduct] = useState(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const productsPerPage = 2
+  const [products, setProducts] = useState(mockProducts);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 6; // Thay đổi từ 2 thành 6
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    image: '',
+    releaseDate: '',
+    price: '',
+    video: '',
+    story: '',
+  });
 
   const handleEdit = (product) => {
-    setSelectedProduct(product)
-    console.log('Edit product:', product)
+    setNewProduct(product);
+    setIsEditing(true);
+    setIsModalOpen(true);
   }
 
   const handleDelete = (productId) => {
-    setProducts(products.filter(p => p.id !== productId))
+    setProducts(products.filter(p => p.id !== productId));
   }
 
-  // Tính toán index của sản phẩm trên trang hiện tại
-  const indexOfLastProduct = currentPage * productsPerPage
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct)
+  const handleViewDetails = (product) => {
+    setSelectedProduct(product);
+  }
+
+  const handleAddProduct = () => {
+    setIsEditing(false);
+    setNewProduct({
+      name: '',
+      image: '',
+      releaseDate: '',
+      price: '',
+      video: '',
+      story: '',
+    });
+    setIsModalOpen(true);
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (isEditing) {
+      setProducts(products.map(p => p.id === newProduct.id ? newProduct : p));
+    } else {
+      const newProductWithId = { ...newProduct, id: products.length + 1 };
+      setProducts([...products, newProductWithId]);
+    }
+    
+    setNewProduct({ name: '', image: '', releaseDate: '', price: '', video: '', story: '' });
+    setIsEditing(false);
+    setIsModalOpen(false);
+  }
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
   return (
     <div className="flex flex-col min-h-screen">
-      <h1 className="text-2xl font-bold mb-4">Product Management</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Product Management</h1>
+        <button 
+          onClick={handleAddProduct} 
+          className="flex items-center text-green-600 hover:text-green-900"
+        >
+          <FaPlus className="mr-1" /> Thêm sản phẩm mới
+        </button>
+      </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded shadow-lg w-3/4 md:w-1/2 lg:w-1/3">
+            <h2 className="text-xl font-bold mb-4">{isEditing ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block text-gray-700">Tên sản phẩm</label>
+                <input 
+                  type="text" 
+                  value={newProduct.name} 
+                  onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} 
+                  required 
+                  className="border rounded w-full py-2 px-3" 
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Hình ảnh URL</label>
+                <input 
+                  type="text" 
+                  value={newProduct.image} 
+                  onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })} 
+                  required 
+                  className="border rounded w-full py-2 px-3" 
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Ngày phát hành</label>
+                <input 
+                  type="date" 
+                  value={newProduct.releaseDate} 
+                  onChange={(e) => setNewProduct({ ...newProduct, releaseDate: e.target.value })} 
+                  required 
+                  className="border rounded w-full py-2 px-3" 
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Giá</label>
+                <input 
+                  type="number" 
+                  value={newProduct.price} 
+                  onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })} 
+                  required 
+                  className="border rounded w-full py-2 px-3" 
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Video URL</label>
+                <input 
+                  type="text" 
+                  value={newProduct.video} 
+                  onChange={(e) => setNewProduct({ ...newProduct, video: e.target.value })} 
+                  required 
+                  className="border rounded w-full py-2 px-3" 
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Cốt truyện</label>
+                <textarea 
+                  value={newProduct.story} 
+                  onChange={(e) => setNewProduct({ ...newProduct, story: e.target.value })} 
+                  required 
+                  className="border rounded w-full py-2 px-3" 
+                  rows="4"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded mr-2">
+                  {isEditing ? 'Cập nhật' : 'Thêm'}
+                </button>
+                <button type="button" onClick={() => setIsModalOpen(false)} className="bg-gray-300 px-4 py-2 rounded">
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal hiển thị thông tin sản phẩm */}
+      {selectedProduct && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded shadow-lg w-3/4 md:w-1/2 lg:w-1/3">
+            <h2 className="text-xl font-bold mb-4">{selectedProduct.name}</h2>
+            <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full mb-4" />
+            <p><strong>Ngày phát hành:</strong> {selectedProduct.releaseDate}</p>
+            <p><strong>Giá:</strong> ${selectedProduct.price.toFixed(2)}</p>
+            <p><strong>Cốt truyện:</strong> {selectedProduct.story}</p>
+            <div className="flex justify-end mt-4">
+              <button onClick={() => setSelectedProduct(null)} className="bg-gray-300 px-4 py-2 rounded">
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="bg-white shadow-md rounded-lg overflow-hidden flex-grow">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Release Date</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
@@ -53,10 +249,12 @@ export default function ProductsPage() {
                   <img src={product.image} alt={product.name} className="w-16 h-16 rounded" />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">{product.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{product.releaseDate}</td>
                 <td className="px-6 py-4 whitespace-nowrap">${product.price.toFixed(2)}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{product.stock}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{product.category}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
+                  <button onClick={() => handleViewDetails(product)} className="text-green-600 hover:text-green-900 mr-2">
+                    <FaEye />
+                  </button>
                   <button onClick={() => handleEdit(product)} className="text-blue-600 hover:text-blue-900 mr-2">
                     <FaEdit />
                   </button>
@@ -69,7 +267,7 @@ export default function ProductsPage() {
           </tbody>
         </table>
       </div>
-      <div className="mt-4"> {/* Thêm khoảng cách phía trên cho pagination */}
+      <div className="mt-4">
         <Pagination 
           currentPage={currentPage} 
           setCurrentPage={setCurrentPage} 
