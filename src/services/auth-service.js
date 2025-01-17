@@ -1,5 +1,7 @@
 import axios from "axios";
 
+export const axiosJWT = axios.create();
+
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 export const loginUser = async (data) => {
@@ -34,6 +36,41 @@ export const forgotPassword = async (email, data) => {
     return response.data;
   } catch (error) {
     console.error("Failed to forgot password user", error);
+    throw error;
+  }
+};
+
+export const fetchDetailUser = async (id, access_token) => {
+  try {
+    const response = await axiosJWT.get(`${API_KEY}/auth/fetch-detail/${id}`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch detail user", error);
+    throw error;
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    const response = await axios.post(`${API_KEY}/auth/log-out`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to log out account", error); 
+    throw error;
+  }
+};
+
+
+export const refreshToken = async () => {
+  try {
+    const response = await axios.post(`${API_KEY}/auth/refresh-token`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to log out account", error); 
     throw error;
   }
 };

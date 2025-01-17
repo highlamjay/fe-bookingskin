@@ -1,13 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 export default function Header() {
   // Giả lập trạng thái đăng nhập và thông tin người dùng
-  const [isLoggedIn] = useState(false); // Đặt là true để mô phỏng
-  const user = {
-    name: 'John Doe',
-    avatar: '/avatar-placeholder.png', // Thay thế bằng đường dẫn hình ảnh avatar thực tế
-  };
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Đặt là true để mô phỏng
+
+  const user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if(user._id){
+      setIsLoggedIn(true);
+    }
+  },[user]) 
 
   const pathname = window.location.pathname;
 
@@ -55,7 +60,7 @@ export default function Header() {
             <div className="flex items-center space-x-3">
               <div className="relative w-10 h-10 transition-transform duration-200 ease-in-out transform hover:scale-110">
                 <img
-                  src={user.avatar}
+                  src={user.image}
                   alt={`${user.name}'s avatar`}
                   className="rounded-full w-full h-full object-cover"
                   onClick={() => window.location.href = '/user-info'} // Điều hướng đến trang thông tin người dùng khi bấm vào avatar

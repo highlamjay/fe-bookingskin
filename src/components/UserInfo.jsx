@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaEdit } from 'react-icons/fa'; // Thêm thư viện icon
+import { useDispatch, useSelector } from 'react-redux';
+import { resetUser } from '../redux/slides/user-Slide';
+import { logoutUser } from '../services/auth-service';
+import * as Alert from '../components/Alert';
 
 // Mock user data
-const user = {
-  name: 'John Doe',
-  username: 'johndoe123',
-  email: 'john.doe@example.com',
+const users = {
   avatar: '/avatar-placeholder.png',
   balance: 1000,
   transactions: [
@@ -19,15 +20,28 @@ const user = {
 }
 
 export default function UserInfoPage() {
+
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  console.log("user", user);
+
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
-  const [newAvatar, setNewAvatar] = useState(user.avatar);
+  const [newAvatar, setNewAvatar] = useState(user.image);
 
   const openTransactionModal = (transaction) => {
     setSelectedTransaction(transaction);
   }
+
+  const handleLogoutUser = async () => {
+    await logoutUser();
+    localStorage.removeItem("access_token");
+    dispatch(resetUser());
+    Alert.success("Logout successfully");
+    navigate("/");
+  };
 
   const handleAvatarChange = (event) => {
     const file = event.target.files[0];
@@ -73,7 +87,7 @@ export default function UserInfoPage() {
               <h3 className="text-xl font-semibold mb-4">User Information</h3>
               <div className="mb-6">
                 <p className="text-gray-600 mb-2">Current Balance</p>
-                <p className="text-2xl font-bold">${user.balance.toFixed(2)}</p>
+                <p className="text-2xl font-bold">${users.balance.toFixed(2)}</p>
               </div>
               <div className="space-y-2 mb-6">
                 <button
@@ -100,7 +114,7 @@ export default function UserInfoPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {user.transactions.map((transaction) => (
+                    {users.transactions.map((transaction) => (
                       <tr key={transaction.id} className="border-b cursor-pointer hover:bg-gray-50" onClick={() => openTransactionModal(transaction)}>
                         <td className="py-2">{transaction.date}</td>
                         <td className="py-2">{transaction.description}</td>
@@ -120,7 +134,7 @@ export default function UserInfoPage() {
       <div className="flex justify-center p-4">
         <button
           className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-          onClick={() => alert('Logged out')}
+          onClick={handleLogoutUser}
         >
           Log Out
         </button>

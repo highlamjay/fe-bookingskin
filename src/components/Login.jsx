@@ -5,8 +5,11 @@ import {Link, useNavigate} from 'react-router-dom'
 import { useSearchParams } from 'next/navigation'
 import { FaGoogle, FaFacebook } from 'react-icons/fa'
 import { useMutation } from '@tanstack/react-query'
-import { loginUser } from '../services/auth-service'
+import { loginUser, fetchDetailUser } from '../services/auth-service'
 import * as Alert from '../components/Alert'
+import { useDispatch } from 'react-redux'
+import { updateUser } from '../redux/slides/user-Slide'
+import { jwtDecode } from "jwt-decode";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -14,17 +17,25 @@ export default function LoginPage() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const searchParams = useSearchParams()
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const mutationLogin = useMutation({
     mutationFn: async (data) => {
       return await loginUser(data);
     },
     onSuccess: (data) => {
-      console.log('Login successful:', data)
       Alert.success(data.message);
+      localStorage.setItem("access_token",JSON.stringify(data?.token));
+      if (data?.token) {
+        const decoded = jwtDecode(data?.token);
+        if (decoded?.id) {
+          handleGetDetailUser(decoded?.id, data?.token);
+        }
+      }
       navigate('/');
     },
     onError: (error) => {
+      Alert.error(error.response.data.message);
       console.error('Login failed:', error)
     }
   })
@@ -36,6 +47,11 @@ export default function LoginPage() {
       return () => clearTimeout(timer)
     }
   }, [searchParams])
+
+  const handleGetDetailUser = async (id, token) => {
+    const res = await fetchDetailUser(id, token);
+    dispatch(updateUser({ ...res?.data, access_token: token }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault()
