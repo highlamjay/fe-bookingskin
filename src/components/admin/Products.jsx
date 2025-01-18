@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { FaEdit, FaTrash, FaEye, FaPlus } from 'react-icons/fa'
 import Pagination from '../Pagination'
+import { createProduct } from '../../services/product-service'
+import * as Alert from '../Alert'
+import { useMutation } from '@tanstack/react-query'
 
 const mockProducts = [
   { 
@@ -68,6 +71,14 @@ export default function ProductsPage() {
   const productsPerPage = 6; // Thay đổi từ 2 thành 6
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
+  const [name, setName] = useState();
+  const [image, setImage] = useState();
+  const [date, setDate] = useState();
+  const [price, setPrice] = useState();
+  const [video, setVideo] = useState();
+  const [story, setStory] = useState();
+
   const [newProduct, setNewProduct] = useState({
     name: '',
     image: '',
@@ -93,14 +104,6 @@ export default function ProductsPage() {
 
   const handleAddProduct = () => {
     setIsEditing(false);
-    setNewProduct({
-      name: '',
-      image: '',
-      releaseDate: '',
-      price: '',
-      video: '',
-      story: '',
-    });
     setIsModalOpen(true);
   }
 
@@ -110,18 +113,35 @@ export default function ProductsPage() {
     if (isEditing) {
       setProducts(products.map(p => p.id === newProduct.id ? newProduct : p));
     } else {
-      const newProductWithId = { ...newProduct, id: products.length + 1 };
-      setProducts([...products, newProductWithId]);
+      console.log('Hình ảnh:',name, image, date, price, story, video);
+      mutationCreateProduct.mutate({
+        name: name,
+        image: image,
+        date: date,
+        price: price,
+        video: video,
+        story: story
+      })
     }
-    
-    setNewProduct({ name: '', image: '', releaseDate: '', price: '', video: '', story: '' });
-    setIsEditing(false);
-    setIsModalOpen(false);
+    //setIsEditing(false);
+    //setIsModalOpen(false);
   }
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const mutationCreateProduct = useMutation({
+    mutationFn: async (data) => {
+      return await createProduct(data)
+    },
+    onSuccess: (data) => {
+      Alert.success('Tạo sản phẩm thành công')
+    },
+    onError: (error) => {
+      Alert.error(error.message)
+    }
+  })
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -144,28 +164,28 @@ export default function ProductsPage() {
                 <label className="block text-gray-700">Tên sản phẩm</label>
                 <input 
                   type="text" 
-                  value={newProduct.name} 
-                  onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)} 
                   required 
                   className="border rounded w-full py-2 px-3" 
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700">Hình ảnh URL</label>
+                <label className="block text-gray-700">Hình ảnh</label>
                 <input 
-                  type="text" 
-                  value={newProduct.image} 
-                  onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })} 
+                  type="file" 
+                  onChange={(e) => setImage(e.target.files[0])} 
                   required 
                   className="border rounded w-full py-2 px-3" 
+                  accept="image/*"
                 />
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700">Ngày phát hành</label>
                 <input 
                   type="date" 
-                  value={newProduct.releaseDate} 
-                  onChange={(e) => setNewProduct({ ...newProduct, releaseDate: e.target.value })} 
+                  value={date} 
+                  onChange={(e) => setDate(e.target.value)} 
                   required 
                   className="border rounded w-full py-2 px-3" 
                 />
@@ -174,27 +194,27 @@ export default function ProductsPage() {
                 <label className="block text-gray-700">Giá</label>
                 <input 
                   type="number" 
-                  value={newProduct.price} 
-                  onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })} 
+                  value={price} 
+                  onChange={(e) => setPrice(parseFloat(e.target.value))} 
                   required 
                   className="border rounded w-full py-2 px-3" 
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700">Video URL</label>
+                <label className="block text-gray-700">Video</label>
                 <input 
-                  type="text" 
-                  value={newProduct.video} 
-                  onChange={(e) => setNewProduct({ ...newProduct, video: e.target.value })} 
+                  type="file" 
+                  onChange={(e) => setVideo(e.target.files[0])} 
                   required 
                   className="border rounded w-full py-2 px-3" 
+                  accept="video/*"
                 />
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700">Cốt truyện</label>
                 <textarea 
-                  value={newProduct.story} 
-                  onChange={(e) => setNewProduct({ ...newProduct, story: e.target.value })} 
+                  value={story} 
+                  onChange={(e) => setStory(e.target.value)} 
                   required 
                   className="border rounded w-full py-2 px-3" 
                   rows="4"

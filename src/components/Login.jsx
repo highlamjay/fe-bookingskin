@@ -35,7 +35,7 @@ export default function LoginPage() {
       if(data.role === 'admin'){
         navigate('/admin')
       } else {
-      navigate('/');
+        navigate('/');
       }
     },
     onError: (error) => {
