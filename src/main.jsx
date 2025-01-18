@@ -20,6 +20,7 @@ import Posts from './components/admin/Posts.jsx';
 import Revenua from './components/admin/Revenua.jsx';
 import HistoryBuy from './components/admin/HistoryBuy.jsx';
 import ConfirmEmail from './components/ConfirmEmail.jsx';
+import Community from './components/Community.jsx';
 import './index.css';
 import { store } from "./redux/store.js";
 import { Provider } from "react-redux";
@@ -49,6 +50,7 @@ root.render(
         <Route path="/user-info" element={<UserInfo />} />
         <Route path="/buy" element={<Buy />} />
         <Route path="/information" element={<Information />} />
+        <Route path="/community" element={<Community />} />
         <Route path="/information-id" element={<InformationId />} />
         
         {/* Admin Routes */}

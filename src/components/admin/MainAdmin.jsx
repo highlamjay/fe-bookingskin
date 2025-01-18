@@ -27,15 +27,15 @@ export default function AdminLayout() {
               </Link>
             </li>
             <li>
-              <Link to="/admin/revenue" className="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
-                <span className="material-icons text-xl"></span>
-                <span>Revenue</span>
-              </Link>
-            </li>
-            <li>
               <Link to="/admin/history" className="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
                 <span className="material-icons text-xl"></span>
                 <span>History</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/admin/revenue" className="flex items-center space-x-2 p-2 rounded hover:bg-gray-700">
+                <span className="material-icons text-xl"></span>
+                <span>Revenue</span>
               </Link>
             </li>
           </ul>

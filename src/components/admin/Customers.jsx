@@ -17,7 +17,7 @@ export default function CustomersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const customersPerPage = 6 // Thay đổi ở đây
+  const customersPerPage = 6
   const [newCustomer, setNewCustomer] = useState({ name: '', username: '', email: '', registeredDate: '', totalOrders: '', image: '' })
 
   const handleEdit = (customer) => {
@@ -100,8 +100,57 @@ export default function CustomersPage() {
           <div className="bg-white p-8 rounded shadow-lg w-3/4 md:w-1/2 lg:w-1/3">
             <h2 className="text-xl font-bold mb-4">{isEditing ? 'Chỉnh sửa khách hàng' : 'Thêm khách hàng mới'}</h2>
             <form onSubmit={handleSubmit}>
-              {/* Các trường nhập liệu như trước */}
-              <div className="flex justify-end">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Tên</label>
+                <input
+                  type="text"
+                  value={newCustomer.name}
+                  onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
+                  required
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Username</label>
+                <input
+                  type="text"
+                  value={newCustomer.username}
+                  onChange={(e) => setNewCustomer({ ...newCustomer, username: e.target.value })}
+                  required
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <input
+                  type="email"
+                  value={newCustomer.email}
+                  onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+                  required
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Ngày đăng ký</label>
+                <input
+                  type="date"
+                  value={newCustomer.registeredDate}
+                  onChange={(e) => setNewCustomer({ ...newCustomer, registeredDate: e.target.value })}
+                  required
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Tổng số đơn hàng</label>
+                <input
+                  type="number"
+                  value={newCustomer.totalOrders}
+                  onChange={(e) => setNewCustomer({ ...newCustomer, totalOrders: e.target.value })}
+                  required
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex justify-end mt-4">
                 <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded mr-2">
                   {isEditing ? 'Cập nhật' : 'Thêm'}
                 </button>
