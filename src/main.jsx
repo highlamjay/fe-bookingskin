@@ -18,6 +18,7 @@ import Customers from './components/admin/Customers.jsx';
 import ProductAdmin from './components/admin/Products.jsx';
 import Posts from './components/admin/Posts.jsx';
 import Revenua from './components/admin/Revenua.jsx';
+import HistoryBuy from './components/admin/HistoryBuy.jsx';
 import ConfirmEmail from './components/ConfirmEmail.jsx';
 import './index.css';
 import { store } from "./redux/store.js";
@@ -57,6 +58,7 @@ root.render(
           <Route path="productadmin" element={<ProductAdmin />} />
           <Route path="post" element={<Posts />} />
           <Route path="revenue" element={<Revenua />} />
+          <Route path="history" element={<HistoryBuy />} />
         </Route>
       </Routes>
     </BrowserRouter>
