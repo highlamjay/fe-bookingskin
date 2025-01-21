@@ -32,7 +32,11 @@ export default function LoginPage() {
           handleGetDetailUser(decoded?.id, data?.token);
         }
       }
-      navigate('/');
+      if(data.role === 'admin'){
+        navigate('/admin')
+      } else {
+        navigate('/');
+      }
     },
     onError: (error) => {
       Alert.error(error.response.data.message);

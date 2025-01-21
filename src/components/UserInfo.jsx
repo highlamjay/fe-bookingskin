@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 'use client'
 
 import { useState } from 'react';
@@ -23,7 +24,7 @@ export default function UserInfoPage() {
 
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  console.log("user", user);
+  const navigate = useNavigate();
 
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
