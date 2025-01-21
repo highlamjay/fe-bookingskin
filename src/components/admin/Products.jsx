@@ -79,6 +79,8 @@ export default function ProductsPage() {
   const [video, setVideo] = useState();
   const [story, setStory] = useState();
 
+  const token = localStorage.getItem('access_token')
+
   const [newProduct, setNewProduct] = useState({
     name: '',
     image: '',
@@ -133,7 +135,7 @@ export default function ProductsPage() {
 
   const mutationCreateProduct = useMutation({
     mutationFn: async (data) => {
-      return await createProduct(data)
+      return await createProduct(data, token)
     },
     onSuccess: (data) => {
       Alert.success('Tạo sản phẩm thành công')
