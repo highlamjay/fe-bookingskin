@@ -9,13 +9,13 @@ const images = [
 export default function ChuyenHinhAnh() {
   const [currentImage, setCurrentImage] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImage((prevImage) => (prevImage + 1) % images.length);
-    }, 10000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrentImage((prevImage) => (prevImage + 1) % images.length);
+  //   }, 10000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
     <div className="relative w-full h-screen"> 
