@@ -35,6 +35,9 @@ export default function NewPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <Link to="/" className="text-2xl text-blue-600 font-bold absolute top-4 left-4 z-10">
+        Home
+      </Link>
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">New password</h2>
         <form onSubmit={handleSubmit} className="space-y-4">

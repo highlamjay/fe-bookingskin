@@ -18,6 +18,11 @@ import UserInfo from "./components/UserInfo.jsx";
 import AdminLayout from "./components/admin/MainAdmin.jsx";
 import Customers from "./components/admin/Customers.jsx";
 import ProductAdmin from "./components/admin/Products.jsx";
+import Community from "./components/Community.jsx";
+import Information from "./components/Information.jsx";
+import InformationID from "./components/InformationId.jsx";
+import InformationProduct from "./components/InformationProduct.jsx";
+import Buy from "./components/Buy.jsx";
 
 // Private Route Component
 const PrivateRoute = ({ children }) => {
@@ -73,8 +78,14 @@ const App = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/products" element={<Products />} />
+      <Route path="/products-id" element={<InformationProduct />} />
+      <Route path="/buy" element={<Buy />} />
       <Route path="/confirm" element={<Confirm />} />
       <Route path="/user-info" element={<UserInfo />} />
+      <Route path="/community" element={<Community />} />
+      <Route path="/information" element={<Information />} />
+      <Route path="/information-id" element={<InformationID />} />
+
       
       {/* Admin Routes */}
       <Route path="/admin" element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
