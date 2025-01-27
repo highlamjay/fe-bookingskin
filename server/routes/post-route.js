@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const uploadMiddleware = require('../middlewares/upload-middleware');
+const upload = require('../middlewares/upload-middleware'); // Import middleware upload
 
-const adminMiddleware = require('../middlewares/admin-middleware');
-const {createPost, fetchAllPosts, fetchDetailPost, editPost, deletePost} = require('../controllers/post-controller');
+const { createPost, fetchAllPosts, fetchDetailPost, editPost, deletePost } = require('../controllers/post-controller');
 
-router.post('/create', adminMiddleware, uploadMiddleware.single('image'), createPost)
-router.get('/fetch-all', fetchAllPosts)
-router.get('/fetch-detail/:id', fetchDetailPost)
-router.put('/edit/:id', adminMiddleware, editPost)
-router.delete('/delete/:id', adminMiddleware, deletePost)
+// Sử dụng upload middleware cho route tạo post
+router.post('/create', upload.single('image'), createPost); // 'image' phải trùng với key trong form-data
+router.get('/fetch-all', fetchAllPosts);
+router.get('/fetch-detail/:id', fetchDetailPost);
+router.put('/edit/:id', editPost);
+router.delete('/delete/:id', deletePost);
 
 module.exports = router;

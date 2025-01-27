@@ -1,39 +1,18 @@
-const { uploadToCloudinary } = require('../helpers/cloudinary-helper');
-const Post = require('../models/Post')
+const Post = require('../models/Post');
 
 //create post controller
 const createPost = async (req, res) => {
     try {
-        const { title, content, date } = req.body;
+        const { title, content } = req.body;
+        const image = req.file.path;
 
-        const imageFile = req.files?.image; // Nếu sử dụng `multer` để upload với nhiều files
-
-        if (!imageFile) {
-        return res.status(400).json({
-            success: false,
-            message: 'Image files are required!',
-        });
-        }
-        
-        // upload image to Cloudinary
-        const imageUploadResult = await uploadToCloudinary(imageFile.path);
-
-        const newPost = new Product({
+        const newPost = new Post({
             title,
-            image: imageUploadResult.url,
-            date,
+            image,
             content,
-        })
+        });
 
-        //check created product 
-        if(!newPost){
-            return res.status(400).json({
-                success: false,
-                message: 'Post not created ! Please try again !'
-            })
-        }
-
-        await newPost.save()
+        await newPost.save();
 
         res.status(200).json({
             success: true,
@@ -46,7 +25,7 @@ const createPost = async (req, res) => {
             message: "Internal server error",
         });
     }
-}
+};
 
 //fetch all posts controller
 const fetchAllPosts = async (req, res) => {

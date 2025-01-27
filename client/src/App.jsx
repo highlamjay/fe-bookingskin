@@ -23,6 +23,7 @@ import Information from "./components/Information.jsx";
 import InformationID from "./components/InformationId.jsx";
 import InformationProduct from "./components/InformationProduct.jsx";
 import Buy from "./components/Buy.jsx";
+import Post from "./components/admin/Posts.jsx";
 
 // Private Route Component
 const PrivateRoute = ({ children }) => {
@@ -92,6 +93,7 @@ const App = () => {
         <Route index element={<div>Welcome to Admin Dashboard</div>} />
         <Route path="customers" element={<Customers />} />
         <Route path="productadmin" element={<ProductAdmin />} />
+        <Route path="post" element={<Post />} />
       </Route>
 
     </Routes>
