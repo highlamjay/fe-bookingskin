@@ -115,7 +115,6 @@ export default function ProductsPage() {
     if (isEditing) {
       setProducts(products.map(p => p.id === newProduct.id ? newProduct : p));
     } else {
-      console.log('Hình ảnh:',name, image, date, price, story, video);
       mutationCreateProduct.mutate({
         name: name,
         image: image,
@@ -135,6 +134,7 @@ export default function ProductsPage() {
 
   const mutationCreateProduct = useMutation({
     mutationFn: async (data) => {
+      console.log('data',data)
       return await createProduct(data, token)
     },
     onSuccess: (data) => {
