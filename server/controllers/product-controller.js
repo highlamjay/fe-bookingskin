@@ -6,8 +6,8 @@ const createProduct = async (req, res) => {
     try {
         const { name, price, description } = req.body;
 
-        const imageFile = req.files?.image; // Nếu sử dụng `multer` để upload với nhiều files
-        const videoFile = req.files?.video;
+        const imageFile = req.files.image?.[0].path; // Trường "image"
+        const videoFile = req.files.video?.[0].path; // Trường "video"
 
         if (!imageFile || !videoFile) {
         return res.status(400).json({
@@ -26,10 +26,10 @@ const createProduct = async (req, res) => {
         }
         
         // upload image to Cloudinary
-        const imageUploadResult = await uploadToCloudinary(imageFile.path);
+        const imageUploadResult = await uploadToCloudinary(imageFile);
 
         // upload video to Cloudinary
-        const videoUploadResult = await uploadVideoToCloudinary(videoFile.path);
+        const videoUploadResult = await uploadVideoToCloudinary(videoFile);
 
         const newProduct = new Product({
             name,

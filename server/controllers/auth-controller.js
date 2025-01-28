@@ -104,6 +104,8 @@ const loginUser = async (req, res) => {
             expiresIn: '15m'
         });
 
+        console.log('Generated Token:', token);
+
         //create refresh token
         const refreshToken = jwt.sign({
             id: user._id,
