@@ -6,9 +6,11 @@ const createPost = async (req, res) => {
         const { title, content } = req.body;
         const image = req.file.path;
 
+        console.log(image)
+
         const newPost = new Post({
             title,
-            image,
+            image: image,
             content,
         });
 
