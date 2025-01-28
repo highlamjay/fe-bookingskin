@@ -1,16 +1,25 @@
 const Post = require('../models/Post');
+const {uploadToCloudinary} = require('../helpers/cloudinary-helper');
+const Image = require('../models/Image');
 
 //create post controller
 const createPost = async (req, res) => {
     try {
         const { title, content } = req.body;
-        const image = req.file.path;
+        console.log("user",req.user)
+        const {url, publicId}= await uploadToCloudinary(req.file.path)
+        
+        //create new image in db
+        const newImage = new Image({
+            url,
+            publicId
+        })
 
-        console.log(image)
+        await newImage.save();
 
         const newPost = new Post({
             title,
-            image: image,
+            image: url,
             content,
         });
 

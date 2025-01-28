@@ -13,6 +13,7 @@ const ImageSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
+        default: "677e79fe36038b1b949536b6"
     }
 },{
     timestamps: true
