@@ -6,6 +6,7 @@ const { createPost, fetchAllPosts, fetchDetailPost, editPost, deletePost } = req
 
 // Sử dụng upload middleware cho route tạo post
 router.post('/create', upload.single('image'), createPost); // 'image' phải trùng với key trong form-data
+
 router.get('/fetch-all', fetchAllPosts);
 router.get('/fetch-detail/:id', fetchDetailPost);
 router.put('/edit/:id', editPost);
