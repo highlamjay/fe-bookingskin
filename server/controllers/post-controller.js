@@ -111,12 +111,12 @@ const fetchDetailPost = async (req, res) => {
 //edit post controller
 const editPost = async (req, res) => {
     try {
-        const { id } = req.params.id;
+        const id = req.params.id;
         const { title, content, date, image } = req.body;
 
         //check post exist
         const post = await Post.findById(id);
-        if(!product){
+        if(!post){
             return res.status(400).json({
                 success: false,
                 message: 'Post not found ! Please try again !'
@@ -161,11 +161,12 @@ const editPost = async (req, res) => {
 //delete post controller
 const deletePost = async (req, res) => {
     try {
-        const { id } = req.params.id;
+        const id  = req.params.id;
+        console.log(id);
 
         //check post exist
         const post = await Post.findById(id);
-        if(!product){
+        if(!post){
             return res.status(400).json({
                 success: false,
                 message: 'Post not found ! Please try again !'

@@ -55,13 +55,11 @@ export default function PostsPage() {
   }
 
   const handleDelete = async (postId) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa bài post này?')) {
-      try {
-        await deletePost(postId)
-        fetchPosts() // Refresh danh sách sau khi xóa
-      } catch (error) {
-        console.error('Failed to delete post:', error)
-      }
+    try {
+      await deletePost(postId)
+      fetchPosts() // Refresh danh sách sau khi xóa
+    } catch (error) {
+      console.error('Failed to delete post:', error)
     }
   }
 
