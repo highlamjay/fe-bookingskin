@@ -101,9 +101,9 @@ const fetchDetailPost = async (req, res) => {
 const editPost = async (req, res) => {
     try {
         const id = req.params.id;
-        const { title, content, date, image } = req.body;
-
-        //check post exist
+        const { title, content } = req.body;
+        
+        // check post exist
         const post = await Post.findById(id);
         if(!post){
             return res.status(400).json({
@@ -112,19 +112,24 @@ const editPost = async (req, res) => {
             })
         }
 
-        //update post
+        // Prepare update data
+        const updateData = {
+            title,
+            content
+        };
+
+        // If new image is uploaded, add it to update data
+        if (req.file) {
+            updateData.image = req.file.path;
+        }
+
+        // update post
         const updatePost = await Post.findByIdAndUpdate(
             id,
-            {
-                title,
-                content,
-                date,
-                image            
-            },
+            updateData,
             {new: true}
         )
 
-        //check post update 
         if(!updatePost){
             return res.status(400).json({
                 success: false,

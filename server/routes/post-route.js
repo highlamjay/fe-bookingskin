@@ -9,7 +9,7 @@ router.post('/create', upload.single('image'), createPost); // 'image' phải tr
 
 router.get('/fetch-all', fetchAllPosts);
 router.get('/fetch-detail/:id', fetchDetailPost);
-router.put('/edit/:id', editPost);
+router.put('/edit/:id', upload.single('image'), editPost);
 router.delete('/delete/:id', deletePost);
 
 module.exports = router;

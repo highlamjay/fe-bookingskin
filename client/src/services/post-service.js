@@ -54,11 +54,16 @@ export const fetchDetailPost = async (id) => {
 };
 
 // Edit post
-export const editPost = async (id, updateData) => {
+export const editPost = async (id, formData) => {
     try {
         const response = await axios.put(
             `${API_KEY}/post/edit/${id}`,
-            updateData
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
         );
         return response.data;
     } catch (error) {

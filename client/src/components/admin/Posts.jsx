@@ -93,22 +93,28 @@ export default function PostsPage() {
   }
 
   const handleUpdatePost = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const formData = new FormData()
-      formData.append('title', newPost.title)
-      formData.append('content', newPost.content)
-      if (newPost.image) {
-        formData.append('image', newPost.image)
-      }
+        const formData = new FormData();
+        formData.append('title', newPost.title);
+        formData.append('content', newPost.content);
+        if (newPost.image) {
+            formData.append('image', newPost.image);
+        }
 
-      await editPost(selectedPost._id, formData)
-      setIsEditModalOpen(false)
-      fetchPosts() // Refresh danh sách sau khi sửa
+        const response = await editPost(selectedPost._id, formData);
+        if (response.success) {
+            setIsEditModalOpen(false);
+            fetchPosts(); // Refresh danh sách sau khi sửa
+        } else {
+            console.error('Failed to update post:', response.message);
+            // Có thể thêm thông báo lỗi cho người dùng ở đây
+        }
     } catch (error) {
-      console.error('Failed to update post:', error)
+        console.error('Failed to update post:', error);
+        // Có thể thêm thông báo lỗi cho người dùng ở đây
     }
-  }
+};
 
   const handleImageChange = (e) => {
     const file = e.target.files[0]
