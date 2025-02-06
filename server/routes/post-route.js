@@ -8,7 +8,7 @@ const { createPost, fetchAllPosts, fetchDetailPost, editPost, deletePost } = req
 router.post('/create', upload.single('image'), createPost); 
 router.get('/fetch-all', fetchAllPosts);
 router.get('/fetch-detail/:id', fetchDetailPost);
-router.put('/edit/:id', editPost);
+router.put('/edit/:id', upload.single('image'), editPost);
 router.delete('/delete/:id', deletePost);
 
 module.exports = router;
