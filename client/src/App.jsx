@@ -85,7 +85,7 @@ const App = () => {
       <Route path="/user-info" element={<UserInfo />} />
       <Route path="/community" element={<Community />} />
       <Route path="/information" element={<Information />} />
-      <Route path="/information-id" element={<InformationID />} />
+      <Route path="/information/:id" element={<InformationID />} />
 
       
       {/* Admin Routes */}
