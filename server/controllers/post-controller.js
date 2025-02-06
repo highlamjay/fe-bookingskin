@@ -1,12 +1,11 @@
 const Post = require('../models/Post');
-const {uploadToCloudinary} = require('../helpers/cloudinary-helper');
+const {uploadToCloudinary, deleteFromCloudinary} = require('../helpers/cloudinary-helper');
 const Image = require('../models/Image');
 
 //create post controller
 const createPost = async (req, res) => {
     try {
         const { title, content } = req.body;
-        console.log("user",req.user)
         const {url, publicId}= await uploadToCloudinary(req.file.path)
         
         //create new image in db
@@ -53,7 +52,7 @@ const fetchAllPosts = async (req, res) => {
         const sortObject = {};
         sortObject[sortBy] = sortOrder;
 
-        const posts = await Post.find().sort(sortObject).skip(skip).limit(limit);
+        const posts = await Post.find({isDeleted: false}).sort(sortObject).skip(skip).limit(limit);
         if(!posts){
             return res.status(400).json({
                 success: false,

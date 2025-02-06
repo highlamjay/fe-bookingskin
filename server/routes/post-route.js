@@ -5,8 +5,7 @@ const upload = require('../middlewares/upload-middleware'); // Import middleware
 const { createPost, fetchAllPosts, fetchDetailPost, editPost, deletePost } = require('../controllers/post-controller');
 
 // Sử dụng upload middleware cho route tạo post
-router.post('/create', upload.single('image'), createPost); // 'image' phải trùng với key trong form-data
-
+router.post('/create', upload.single('image'), createPost); 
 router.get('/fetch-all', fetchAllPosts);
 router.get('/fetch-detail/:id', fetchDetailPost);
 router.put('/edit/:id', editPost);
