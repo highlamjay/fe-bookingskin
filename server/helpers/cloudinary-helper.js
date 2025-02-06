@@ -28,4 +28,13 @@ const uploadVideoToCloudinary = async (filePath) => {
   }
 };
 
-module.exports = { uploadToCloudinary, uploadVideoToCloudinary };
+const deleteFromCloudinary = async (publicId) => {
+  try {
+      await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+      console.error('Error deleting image from Cloudinary:', error);
+      throw error;
+  }
+};
+
+module.exports = { uploadToCloudinary, uploadVideoToCloudinary, deleteFromCloudinary };
