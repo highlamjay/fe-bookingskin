@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
+const dotenv = require("dotenv");
+dotenv.config();
 
-const isAdminUser = (req, res, next) => {
+const isAdminUser = async (req, res, next) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
@@ -8,29 +10,34 @@ const isAdminUser = (req, res, next) => {
         if(!token) {
             return res.status(401).json({
                 success: false,
-                message: 'Unauthorized ! Please login to continue !'
+                message: "Unauthorized! Token is missing.",
             });
         }
 
-        //decode this token
-        try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-            req.user = decoded;
-
-            if (decoded.role !== "admin") {
-                return res.status(403).json({
-                    success: false,
-                    message: "Access denied! Admin rights required.",
-                });
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) {
+              return res.status(403).json({
+                status: "ERROR",
+                message: "Invalid or expired token.",
+              });
             }
+      
+            console.log("Decoded Token:", decoded);
+      
+            // Kiểm tra quyền admin
+            if (decoded.role !== "admin") {
+              return res.status(403).json({
+                status: "ERROR",
+                message: "Access denied! Admin rights required.",
+              });
+            }
+      
+            // Gắn thông tin user vào request
+            req.user = decoded;
+      
+            // Tiếp tục xử lý
             next();
-        } catch (error) {
-            return res.status(500).json({
-                success: false,
-                message: 'Unauthorized ! Please login to continue !'
-            })
-        }
+        });
         
     } catch (error) {
         console.log(error);

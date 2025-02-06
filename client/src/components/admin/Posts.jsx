@@ -1,16 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { FaEdit, FaTrash, FaEye, FaPlus } from 'react-icons/fa'
 import Pagination from '../Pagination'
-import { createPost, fetchAllPosts, deletePost, editPost } from '../../services/post-service'
+import { createPost, fetchAllPosts, deletePost, editPost } from '../../services/post-service';
+import * as Alert from '../Alert'
+import { useMutation } from '@tanstack/react-query';
 
 export default function PostsPage() {
-  const [posts, setPosts] = useState([])
-  const [selectedPost, setSelectedPost] = useState(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [newPost, setNewPost] = useState({
     title: '',
     content: '',
@@ -25,7 +28,7 @@ export default function PostsPage() {
   // Fetch posts khi component mount hoặc currentPage thay đổi
   useEffect(() => {
     fetchPosts()
-  }, [currentPage])
+  }, [currentPage, refresh])
 
   const fetchPosts = async () => {
     try {
@@ -86,6 +89,7 @@ export default function PostsPage() {
 
       await createPost(formData)
       setIsModalOpen(false)
+      
       fetchPosts() // Refresh danh sách sau khi thêm
     } catch (error) {
       console.error('Failed to create post:', error)
@@ -123,6 +127,22 @@ export default function PostsPage() {
       image: file
     }))
   }
+
+  const mutationCreatePost = useMutation({
+    mutationFn: async (data) => {
+      return await createPost(data)
+    },
+    onSuccess: (data) => {
+      console.log("data",data)
+      Alert.success(data.message);
+      setRefresh(!refresh);
+      setIsModalOpen(false)
+    },
+    onError: (error) => {
+      Alert.error(error.response.data.message);
+      console.error('Failed to create post:', error)
+    }
+  });
 
   return (
     <div className="flex flex-col min-h-screen">

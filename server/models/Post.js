@@ -16,7 +16,11 @@ const PostSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
-    }
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }  
 }, {
     timestamps: true  // Adds createdAt and updatedAt automatically
 });
