@@ -71,9 +71,9 @@ const fetchAllPosts = async (req, res) => {
 //fetch detail post controller
 const fetchDetailPost = async (req, res) => {
     try {
-        const { id } = req.params.id;
+        const id = req.params.id;  // Sửa lại chỗ này, bỏ .id vì đang lấy sai
 
-        //check post exist
+        // check post exist
         const post = await Post.findById(id);
         if(!post){
             return res.status(400).json({
