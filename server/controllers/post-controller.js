@@ -166,7 +166,6 @@ const editPost = async (req, res) => {
 const deletePost = async (req, res) => {
     try {
         const id  = req.params.id;
-        console.log(id);
 
         //check post exist
         const post = await Post.findById(id);
@@ -178,7 +177,8 @@ const deletePost = async (req, res) => {
         }
 
         //delete post
-        await Post.findByIdAndDelete(id);
+        post.isDeleted = true;
+        await post.save();
 
         res.status(200).json({
             success: true,
