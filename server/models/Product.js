@@ -10,7 +10,7 @@ const ProductSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    description: {
+    story: {
         type: String,
         required: true
     },
@@ -22,6 +22,14 @@ const ProductSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    releaseDate: {
+        type: Date,
+        required: true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true
 });
