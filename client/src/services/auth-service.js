@@ -54,6 +54,25 @@ export const fetchDetailUser = async (id, access_token) => {
   }
 };
 
+export const fetchAllUser = async (page = 1, limit = 6, sortBy = 'createdAt', sortOrder = 'desc') => {
+  try {
+    const response = await axiosJWT.get(`${API_KEY}/auth/fetch-all`,
+      {
+        params: {
+            page,
+            limit,
+            sortBy,
+            sortOrder
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch all users", error);
+    throw error;
+  }
+};
+
 export const logoutUser = async () => {
   try {
     const response = await axios.post(`${API_KEY}/auth/log-out`);

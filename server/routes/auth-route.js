@@ -23,7 +23,7 @@ router.post('/login', loginUser)
 router.post('/change-password/:id', authMiddleware, changePasswordUser)
 router.post('/forgot-password', forgotPasswordUser)
 router.get('/fetch-detail/:id', authMiddleware, fetchDetailUser)
-router.get('/fetch-all', authMiddleware, adminMiddleware, fetchAllUser)
+router.get('/fetch-all', fetchAllUser)
 router.put('/upload-image', authMiddleware, uploadMiddleware.single('image'), uploadAvatarUser)
 router.post('/log-out', logoutUser)
 router.post("/refresh-token", refreshToken);

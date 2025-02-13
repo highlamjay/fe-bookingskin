@@ -22,10 +22,10 @@ export default function ProductsPage() {
   const [totalPosts, setTotalPosts] = useState(0)
 
   useEffect(() => {
-      fetchPosts();
+      fetchProducts();
     }, [currentPage, refresh])
   
-  const fetchPosts = async () => {
+  const fetchProducts = async () => {
     try {
       const response = await fetchAllProducts(currentPage, productsPerPage)
       setProducts(response.data)

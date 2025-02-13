@@ -33,6 +33,10 @@ const UserSchema = new mongoose.Schema({
     image: {
         type: String,
         default: null,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
     }
 },
 {
