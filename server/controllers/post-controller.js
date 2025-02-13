@@ -46,7 +46,7 @@ const fetchAllPosts = async (req, res) => {
 
         const sortBy = req.query.sortBy || 'createdAt';
         const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
-        const totalPosts = await Post.countDocuments();
+        const totalPosts = await Post.countDocuments({ isDeleted: false });
         const totalPages = Math.ceil(totalPosts / limit);
 
         const sortObject = {};

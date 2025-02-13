@@ -61,7 +61,7 @@ const fetchAllProducts = async (req, res) => {
 
         const sortBy = req.query.sortBy || 'createdAt';
         const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
-        const totalProducts = await Product.countDocuments();
+        const totalProducts = await Product.countDocuments({ isDeleted: false });
         const totalPages = Math.ceil(totalProducts / limit);
 
         const sortObject = {};
