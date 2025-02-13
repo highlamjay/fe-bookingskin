@@ -96,7 +96,7 @@ const fetchAllProducts = async (req, res) => {
 //fetch detail product controller
 const fetchDetailProduct = async (req, res) => {
     try {
-        const { id } = req.params.id;
+        const id  = req.params.id;
 
         //check product exist
         const product = await Product.findById(id);

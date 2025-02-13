@@ -1,27 +1,27 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-const products = [
-    { id: 1, name: 'Product 1', price: 19.99, image: '/placeholder.svg', launchDate: '2023-01-01', videoUrl: 'https://www.example.com/product1-video.mp4' },
-    { id: 2, name: 'Product 2', price: 29.99, image: '/placeholder.svg', launchDate: '2023-02-15', videoUrl: 'https://www.example.com/product2-video.mp4' },
-    { id: 3, name: 'Product 3', price: 39.99, image: '/placeholder.svg', launchDate: '2023-03-30', videoUrl: 'https://www.example.com/product3-video.mp4' },
-    { id: 4, name: 'Product 4', price: 49.99, image: '/placeholder.svg', launchDate: '2023-04-10', videoUrl: 'https://www.example.com/product4-video.mp4' },
-    { id: 5, name: 'Product 5', price: 59.99, image: '/placeholder.svg', launchDate: '2023-05-20', videoUrl: 'https://www.example.com/product5-video.mp4' },
-    { id: 6, name: 'Product 6', price: 69.99, image: '/placeholder.svg', launchDate: '2023-06-05', videoUrl: 'https://www.example.com/product6-video.mp4' },
-];
+import { fetchDetailProduct } from '../services/product-service';
+import { formatVND } from '../utils/formatVND';
 
 export default function ProductDetail() {
-  const id = 1; 
-  const [product, setProduct] = useState(null);
+  const id = localStorage.getItem('productId'); 
+  const [product, setProduct] = useState("");
 
   useEffect(() => {
-    const foundProduct = products.find(p => p.id === id);
-    setProduct(foundProduct);
-  }, [id]);
+    fetchDetail(id);
+  }, [id])
 
-  if (!product) {
-    return <div>Loading...</div>;
+
+  const fetchDetail = async (id) => {
+    try {
+      const response = await fetchDetailProduct(id)
+      setProduct(response.data)
+      console.log(product)
+    } catch (error) {
+      console.error('Failed to fetch posts:', error)
+    }
   }
+
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
@@ -29,7 +29,7 @@ export default function ProductDetail() {
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="flex justify-center mb-8 mt-8">
             <video 
-              src={product.videoUrl} 
+              src={product.video} 
               controls 
               className="w-2/3 h-auto"
             >
@@ -48,8 +48,8 @@ export default function ProductDetail() {
             </div>
             <div className="md:w-1/2">
               <h1 className="text-3xl font-bold mb-8">{product.name}</h1>
-              <p className="text-gray-600 mb-2">Launch Date: {product.launchDate}</p>
-              <p className="text-2xl font-semibold text-blue-600 mb-6">${product.price.toFixed(2)}</p>
+              <p className="text-gray-600 mb-2">Launch Date: {new Date(product.releaseDate).toLocaleDateString("en-GB")}</p>
+              <p className="text-2xl font-semibold text-blue-600 mb-6">{formatVND(product.price)}</p>
               <div className="mt-16">
                 <Link 
                   to="/buy" // Dùng Link để điều hướng
