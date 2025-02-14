@@ -37,12 +37,22 @@ export default function UserInfoPage() {
   }
 
   const handleLogoutUser = async () => {
-    await logoutUser();
-    localStorage.removeItem("access_token");
-    dispatch(resetUser());
-    Alert.success("Logout successfully");
-    navigate("/");
-  };
+    try {
+        await logoutUser(user.access_token);
+        
+        // Xóa tất cả access_token từ localStorage
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        // Nếu bạn có các token khác cần xóa, hãy thêm vào đây
+        
+        dispatch(resetUser());
+        Alert.success("Logout successfully");
+        navigate("/");
+    } catch (error) {
+        console.error("Logout failed:", error);
+        Alert.error("Logout failed. Please try again.");
+    }
+};
 
   const handleAvatarChange = (event) => {
     const file = event.target.files[0];

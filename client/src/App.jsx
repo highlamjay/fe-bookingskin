@@ -14,6 +14,7 @@ import Register from "./components/Register.jsx";
 import ForgotPassword from "./components/ForgotPassword.jsx";
 import Products from "./components/Products.jsx";
 import Confirm from "./components/Confirm.jsx";
+import ConfirmEmail from "./components/ConfirmEmail.jsx";
 import UserInfo from "./components/UserInfo.jsx";
 import AdminLayout from "./components/admin/MainAdmin.jsx";
 import Customers from "./components/admin/Customers.jsx";
@@ -82,6 +83,7 @@ const App = () => {
       <Route path="/product-id/:id" element={<InformationProduct />} />
       <Route path="/buy" element={<Buy />} />
       <Route path="/confirm" element={<Confirm />} />
+      <Route path="/confirm-email" element={<ConfirmEmail />} />
       <Route path="/user-info" element={<UserInfo />} />
       <Route path="/community" element={<Community />} />
       <Route path="/information" element={<Information />} />

@@ -25,7 +25,7 @@ router.post('/forgot-password', forgotPasswordUser)
 router.get('/fetch-detail/:id', authMiddleware, fetchDetailUser)
 router.get('/fetch-all', fetchAllUser)
 router.put('/upload-image', authMiddleware, uploadMiddleware.single('image'), uploadAvatarUser)
-router.post('/log-out', logoutUser)
+router.post('/log-out', logoutUser);
 router.post("/refresh-token", refreshToken);
 
 module.exports = router;

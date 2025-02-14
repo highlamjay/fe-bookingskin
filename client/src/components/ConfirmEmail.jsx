@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { sendCodeAgain, verifyCode } from '../../../src/services/verification-service';
+import { sendCodeAgain, verifyCode } from '../services/verification-service';
 import * as Alert from './Alert';
+import { Link } from 'react-router-dom';
 
 export default function ConfirmEmail() {
     const [code, setCode] = useState('');
