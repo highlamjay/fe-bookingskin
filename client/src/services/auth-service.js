@@ -40,6 +40,16 @@ export const forgotPassword = async (email, data) => {
   }
 };
 
+export const fetchAllUser = async () => {
+  try {
+      const response = await axios.get(`${API_KEY}/auth/fetch-all`);
+      return response.data;
+  } catch (error) {
+      console.error("Failed to fetch all users", error);
+      throw error;
+  }
+};
+
 export const fetchDetailUser = async (id, access_token) => {
   try {
     const response = await axiosJWT.get(`${API_KEY}/auth/fetch-detail/${id}`, {
@@ -54,16 +64,24 @@ export const fetchDetailUser = async (id, access_token) => {
   }
 };
 
-export const logoutUser = async () => {
+
+export const logoutUser = async (access_token) => {
   try {
-    const response = await axios.post(`${API_KEY}/auth/log-out`);
-    return response.data;
+      const response = await axios.post(
+          `${API_KEY}/auth/log-out`, 
+          {}, 
+          {
+              headers: {
+                  Authorization: `Bearer ${access_token}`,
+              }
+          }
+      );
+      return response.data;
   } catch (error) {
-    console.error("Failed to log out account", error); 
-    throw error;
+      console.error("Failed to log out user", error);
+      throw error;
   }
 };
-
 
 export const refreshToken = async () => {
   try {

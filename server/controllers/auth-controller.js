@@ -95,6 +95,10 @@ const loginUser = async (req, res) => {
             })
         }
 
+        // Set online status to true
+        user.online = true;
+        await user.save();
+
         //create access token
         const token = jwt.sign({
             id: user._id, 
@@ -103,8 +107,6 @@ const loginUser = async (req, res) => {
         }, process.env.JWT_SECRET, {
             expiresIn: '15m'
         });
-
-        console.log('Generated Token:', token);
 
         //create refresh token
         const refreshToken = jwt.sign({
@@ -115,7 +117,6 @@ const loginUser = async (req, res) => {
             expiresIn: '7d'
         });
 
-        //sace refresh token in cookie
         res.cookie("refresh_token", refreshToken, {
             httpOnly: true,
             secure: false,
@@ -140,17 +141,34 @@ const loginUser = async (req, res) => {
 
 //logout controller
 const logoutUser = async (req, res) => {
-  try {
-    res.clearCookie("refresh_token");
-    return res.status(200).json({
-      success: true,
-      message: "Logout successfully",
-    });
-  } catch (e) {
-    return res.status(404).json({
-      message: e,
-    });
-  }
+    try {
+        // Lấy token từ header
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+
+        if (token) {
+            // Giải mã token để lấy thông tin user
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            
+            // Cập nhật trạng thái online thành false
+            await User.findByIdAndUpdate(decoded.id, { online: false });
+        }
+
+        // Xóa cookie refresh token
+        res.clearCookie("refresh_token");
+
+        // Trả về phản hồi thành công
+        res.status(200).json({
+            success: true,
+            message: "Logout successfully",
+        });
+    } catch (error) {
+        console.error("Logout error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error! Please try again!",
+        });
+    }
 };
 
 //change password controller
@@ -294,28 +312,25 @@ const fetchDetailUser = async (req, res) => {
 }
 
 //fetch all user 
+//fetch all user controller
 const fetchAllUser = async (req, res) => {
     try {
-        const users = await User.find();
-        if(!users){
-            return res.status(400).json({
-                success: false,
-                message: 'Users not found ! Please try again !'
-            })
-        }
+        // Lấy tất cả user từ database, loại bỏ trường password
+        const users = await User.find({}, '-password');
+
         res.status(200).json({
             success: true,
-            message: 'Users found !',
+            message: 'Users fetched successfully!',
             data: users
-        })
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({
             success: false,
-            message: 'Internal server error ! Please try again !'
-        })
+            message: 'Internal server error! Please try again!'
+        });
     }
-}
+};
 
 //upload avatar user
 const uploadAvatarUser = async (req, res) => {
@@ -410,8 +425,8 @@ module.exports = {
     logoutUser,
     changePasswordUser,
     forgotPasswordUser,
-    fetchDetailUser,
     fetchAllUser,
+    fetchDetailUser,
     uploadAvatarUser,
     refreshToken
 }
