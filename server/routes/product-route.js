@@ -11,10 +11,10 @@ const {
 } = require('../controllers/product-controller'); 
 const adminMiddleware = require('../middlewares/admin-middleware');
 
-router.post('/create', uploadMiddleware.fields([{ name: "image" }, { name: "video" }]) , createProduct)
+router.post('/create', uploadMiddleware.fields([{ name: "image", maxCount: 1 }, { name: "video", maxCount: 1 }]) , createProduct)
 router.get('/fetch-all', fetchAllProducts)
 router.get('/fetch-detail/:id', fetchDetailProduct)
-router.put('/edit/:id', editProduct)
+router.put('/edit/:id', uploadMiddleware.fields([{ name: "image", maxCount: 1 }, { name: "video", maxCount: 1 }]), editProduct)
 router.delete('/delete/:id', deleteProduct)
 
 module.exports = router;

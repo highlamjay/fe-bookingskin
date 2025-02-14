@@ -80,7 +80,7 @@ const App = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/products" element={<Products />} />
-      <Route path="/products-id" element={<InformationProduct />} />
+      <Route path="/product-id/:id" element={<InformationProduct />} />
       <Route path="/buy" element={<Buy />} />
       <Route path="/confirm" element={<Confirm />} />
       <Route path="/confirm-email" element={<ConfirmEmail />} />

@@ -1,21 +1,15 @@
 const { uploadToCloudinary, uploadVideoToCloudinary } = require('../helpers/cloudinary-helper');
+const Image = require('../models/Image');
 const Product = require('../models/Product')
 
 //create product controller
 const createProduct = async (req, res) => {
     try {
-        const { name, price, description } = req.body;
-
-        const imageFile = req.files.image?.[0].path; // Trường "image"
-        const videoFile = req.files.video?.[0].path; // Trường "video"
-
-        if (!imageFile || !videoFile) {
-        return res.status(400).json({
-            success: false,
-            message: 'Image and video files are required!',
-        });
-        }
-
+        const { name, price, story, releaseDate } = req.body;
+        
+        const imageURL = req.files['image'][0].path;
+        const videoURL = req.files['video'][0].path;
+        
         //check product exist
         const product = await Product.findOne({name});
         if(product){
@@ -25,18 +19,13 @@ const createProduct = async (req, res) => {
             })
         }
         
-        // upload image to Cloudinary
-        const imageUploadResult = await uploadToCloudinary(imageFile);
-
-        // upload video to Cloudinary
-        const videoUploadResult = await uploadVideoToCloudinary(videoFile);
-
         const newProduct = new Product({
             name,
-            image: imageUploadResult.url,
+            image: imageURL,
             price,
-            description,
-            video: videoUploadResult.url,
+            story,
+            releaseDate,
+            video: videoURL,
         })
 
         //check created product 
@@ -51,7 +40,8 @@ const createProduct = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: "Product created successfully"
+            message: "Product created successfully",
+            data: newProduct
         });
     } catch (error) {
         console.error(error);
@@ -71,13 +61,13 @@ const fetchAllProducts = async (req, res) => {
 
         const sortBy = req.query.sortBy || 'createdAt';
         const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
-        const totalProducts = await Product.countDocuments();
+        const totalProducts = await Product.countDocuments({ isDeleted: false });
         const totalPages = Math.ceil(totalProducts / limit);
 
         const sortObject = {};
         sortObject[sortBy] = sortOrder;
 
-        const products = await Product.find().sort(sortObject).skip(skip).limit(limit);
+        const products = await Product.find({isDeleted: false}).sort(sortObject).skip(skip).limit(limit);
         if(!products){
             return res.status(400).json({
                 success: false,
@@ -106,7 +96,7 @@ const fetchAllProducts = async (req, res) => {
 //fetch detail product controller
 const fetchDetailProduct = async (req, res) => {
     try {
-        const { id } = req.params.id;
+        const id  = req.params.id;
 
         //check product exist
         const product = await Product.findById(id);
@@ -135,9 +125,10 @@ const fetchDetailProduct = async (req, res) => {
 //edit product controller
 const editProduct = async (req, res) => {
     try {
-        const { id } = req.params.id;
-        const { name, image, price, description, video } = req.body;
+        const id  = req.params.id;
+        const { name, price, story, releaseDate } = req.body;
 
+        console.log(req.body);
         //check product exist
         const product = await Product.findById(id);
         if(!product){
@@ -147,16 +138,24 @@ const editProduct = async (req, res) => {
             })
         }
 
+        // Prepare update data
+        const updateData = {
+            name,
+            story,
+            price,
+            releaseDate
+        };
+
+        // If new image is uploaded, add it to update data
+        if (req.file) {
+            updateData.image = req.files['image'][0].path;
+            updateData.video = req.files['video'][0].path;
+        }
+
         //update product
         const updateProduct = await Product.findByIdAndUpdate(
             id,
-            {
-                name,
-                image,
-                price,
-                description,
-                video
-            },
+            updateData,
             {new: true}
         )
 
@@ -186,7 +185,7 @@ const editProduct = async (req, res) => {
 //delete product controller
 const deleteProduct = async (req, res) => {
     try {
-        const { id } = req.params.id;
+        const id = req.params.id;
 
         //check product exist
         const product = await Product.findById(id);
@@ -198,7 +197,8 @@ const deleteProduct = async (req, res) => {
         }
 
         //delete product
-        await Product.findByIdAndDelete(id);
+        product.isDeleted = true;
+        await product.save();
 
         res.status(200).json({
             success: true,

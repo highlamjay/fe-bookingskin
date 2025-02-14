@@ -1,85 +1,40 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaEdit, FaTrash, FaEye, FaPlus } from 'react-icons/fa'
 import Pagination from '../Pagination'
-import { createProduct } from '../../services/product-service'
+import { createProduct, deleteProduct, editProduct, fetchAllProducts } from '../../services/product-service'
 import * as Alert from '../Alert'
 import { useMutation } from '@tanstack/react-query'
-
-const mockProducts = [
-  { 
-    id: 1, 
-    name: 'Product A', 
-    image: 'link_to_image_1', 
-    releaseDate: '2023-01-01', 
-    price: 19.99, 
-    video: 'link_to_video_1',
-    story: 'Cốt truyện của sản phẩm A...' 
-  },
-  { 
-    id: 2, 
-    name: 'Product B', 
-    image: 'link_to_image_2', 
-    releaseDate: '2023-02-01', 
-    price: 29.99, 
-    video: 'link_to_video_2',
-    story: 'Cốt truyện của sản phẩm B...' 
-  },
-  { 
-    id: 3, 
-    name: 'Product C', 
-    image: 'link_to_image_3', 
-    releaseDate: '2023-03-01', 
-    price: 39.99, 
-    video: 'link_to_video_3',
-    story: 'Cốt truyện của sản phẩm C...' 
-  },
-  { 
-    id: 4, 
-    name: 'Product D', 
-    image: 'link_to_image_4', 
-    releaseDate: '2023-04-01', 
-    price: 49.99, 
-    video: 'link_to_video_4',
-    story: 'Cốt truyện của sản phẩm D...' 
-  },
-  { 
-    id: 5, 
-    name: 'Product E', 
-    image: 'link_to_image_5', 
-    releaseDate: '2023-05-01', 
-    price: 59.99, 
-    video: 'link_to_video_5',
-    story: 'Cốt truyện của sản phẩm E...' 
-  },
-  { 
-    id: 6, 
-    name: 'Product F', 
-    image: 'link_to_image_6', 
-    releaseDate: '2023-06-01', 
-    price: 69.99, 
-    video: 'link_to_video_6',
-    story: 'Cốt truyện của sản phẩm F...' 
-  },
-]
+import { formatVND } from '../../utils/formatVND'
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState(mockProducts);
+  const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 6; // Thay đổi từ 2 thành 6
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetail, setIsDetail] = useState(false);
 
-  const [name, setName] = useState();
-  const [image, setImage] = useState();
-  const [date, setDate] = useState();
-  const [price, setPrice] = useState();
-  const [video, setVideo] = useState();
-  const [story, setStory] = useState();
+  const [refresh, setRefresh] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalPosts, setTotalPosts] = useState(0)
 
-  const token = localStorage.getItem('access_token')
+  useEffect(() => {
+      fetchProducts();
+    }, [currentPage, refresh])
+  
+  const fetchProducts = async () => {
+    try {
+      const response = await fetchAllProducts(currentPage, productsPerPage)
+      setProducts(response.data)
+      setTotalPages(response.totalPages)
+      setTotalPosts(response.totalProducts)
+    } catch (error) {
+      console.error('Failed to fetch posts:', error)
+    }
+  }
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -90,18 +45,36 @@ export default function ProductsPage() {
     story: '',
   });
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    setNewProduct(prev => ({
+      ...prev,
+      image: file
+    }))
+  }
+
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0]
+    setNewProduct(prev => ({
+      ...prev,
+      video: file
+    }))
+  }
+
   const handleEdit = (product) => {
     setNewProduct(product);
     setIsEditing(true);
     setIsModalOpen(true);
+    // setSelectedProduct(product);
   }
 
   const handleDelete = (productId) => {
-    setProducts(products.filter(p => p.id !== productId));
+    mutationDeleteProduct.mutate(productId);
   }
 
   const handleViewDetails = (product) => {
     setSelectedProduct(product);
+    setIsDetail(true);
   }
 
   const handleAddProduct = () => {
@@ -111,21 +84,22 @@ export default function ProductsPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (isEditing) {
-      setProducts(products.map(p => p.id === newProduct.id ? newProduct : p));
-    } else {
-      mutationCreateProduct.mutate({
-        name: name,
-        image: image,
-        date: date,
-        price: price,
-        video: video,
-        story: story
-      })
+    const formData = new FormData()
+    formData.append('name', newProduct.name)
+    formData.append('price', newProduct.price)
+    formData.append('story', newProduct.story)
+    formData.append('releaseDate', newProduct.releaseDate)
+    if (newProduct.image) {
+      formData.append('image', newProduct.image)
     }
-    //setIsEditing(false);
-    //setIsModalOpen(false);
+    if (newProduct.video) {
+      formData.append('video', newProduct.video)
+    }
+    if (isEditing) {
+      mutationEditProduct.mutate({ id: newProduct._id, data: formData })
+    } else {
+      mutationCreateProduct.mutate(formData)
+    }
   }
 
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -134,14 +108,54 @@ export default function ProductsPage() {
 
   const mutationCreateProduct = useMutation({
     mutationFn: async (data) => {
-      console.log('data',data)
-      return await createProduct(data, token)
+      return await createProduct(data)
     },
     onSuccess: (data) => {
-      Alert.success('Tạo sản phẩm thành công')
+      Alert.success(data.message);
+      setRefresh(!refresh);
+      setIsModalOpen(false);
+      setNewProduct({
+        name: '',
+        image: '',
+        releaseDate: '',
+        price: '',
+        video: '',
+        story: ''
+      });
     },
     onError: (error) => {
-      Alert.error(error.message)
+      Alert.error(error.response.data.message);
+      console.error('Failed to create post:', error)
+    }
+  })
+
+  const mutationEditProduct = useMutation({
+    mutationFn: async ({ id, data }) => {
+      return await editProduct(id, data); 
+  },
+    onSuccess: (data) => {
+      Alert.success(data.message);
+      setRefresh(!refresh);
+      setIsEditing(false);
+      setIsModalOpen(false);
+    },
+    onError: (error) => {
+      Alert.error(error.response.data.message);
+      console.error('Failed to create post:', error)
+    }
+  })
+
+  const mutationDeleteProduct = useMutation({
+    mutationFn: async (id) => {
+      return await deleteProduct(id)
+    },
+    onSuccess: (data) => {
+      Alert.success(data.message);
+      setRefresh(!refresh);
+    },
+    onError: (error) => {
+      Alert.error(error.response.data.message);
+      console.error('Failed to create post:', error)
     }
   })
 
@@ -166,8 +180,8 @@ export default function ProductsPage() {
                 <label className="block text-gray-700">Tên sản phẩm</label>
                 <input 
                   type="text" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
+                  value={newProduct.name} 
+                  onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
                   required 
                   className="border rounded w-full py-2 px-3" 
                 />
@@ -176,8 +190,8 @@ export default function ProductsPage() {
                 <label className="block text-gray-700">Hình ảnh</label>
                 <input 
                   type="file" 
-                  onChange={(e) => setImage(e.target.files[0])} 
-                  required 
+                  onChange={handleImageChange}
+                  required={!isEditing}
                   className="border rounded w-full py-2 px-3" 
                   accept="image/*"
                 />
@@ -186,9 +200,9 @@ export default function ProductsPage() {
                 <label className="block text-gray-700">Ngày phát hành</label>
                 <input 
                   type="date" 
-                  value={date} 
-                  onChange={(e) => setDate(e.target.value)} 
-                  required 
+                  value={newProduct.releaseDate} 
+                  onChange={(e) => setNewProduct({ ...newProduct, releaseDate: e.target.value })}
+                  required={!isEditing}
                   className="border rounded w-full py-2 px-3" 
                 />
               </div>
@@ -196,8 +210,8 @@ export default function ProductsPage() {
                 <label className="block text-gray-700">Giá</label>
                 <input 
                   type="number" 
-                  value={price} 
-                  onChange={(e) => setPrice(parseFloat(e.target.value))} 
+                  value={newProduct.price} 
+                  onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
                   required 
                   className="border rounded w-full py-2 px-3" 
                 />
@@ -206,8 +220,8 @@ export default function ProductsPage() {
                 <label className="block text-gray-700">Video</label>
                 <input 
                   type="file" 
-                  onChange={(e) => setVideo(e.target.files[0])} 
-                  required 
+                  onChange={handleVideoChange} 
+                  required={!isEditing} 
                   className="border rounded w-full py-2 px-3" 
                   accept="video/*"
                 />
@@ -215,8 +229,8 @@ export default function ProductsPage() {
               <div className="mb-4">
                 <label className="block text-gray-700">Cốt truyện</label>
                 <textarea 
-                  value={story} 
-                  onChange={(e) => setStory(e.target.value)} 
+                  value={newProduct.story} 
+                  onChange={(e) => setNewProduct({ ...newProduct, story: e.target.value })}
                   required 
                   className="border rounded w-full py-2 px-3" 
                   rows="4"
@@ -236,13 +250,19 @@ export default function ProductsPage() {
       )}
 
       {/* Modal hiển thị thông tin sản phẩm */}
-      {selectedProduct && (
+      {selectedProduct && isDetail && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded shadow-lg w-3/4 md:w-1/2 lg:w-1/3">
             <h2 className="text-xl font-bold mb-4">{selectedProduct.name}</h2>
-            <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full mb-4" />
-            <p><strong>Ngày phát hành:</strong> {selectedProduct.releaseDate}</p>
-            <p><strong>Giá:</strong> ${selectedProduct.price.toFixed(2)}</p>
+            <img src={selectedProduct.image} alt={selectedProduct.name} className="h-[200px] mx-auto block mb-4" />
+            <p><strong>Ngày phát hành:</strong> {new Date(selectedProduct.releaseDate).toLocaleDateString('en-GB')}</p>
+            <p><strong>Giá:</strong>{formatVND(selectedProduct.price)}</p>
+            <p><strong>Video:</strong>
+            <video className="w-full mt-2" controls>
+              <source src={selectedProduct.video} type="video/mp4" />
+              Trình duyệt của bạn không hỗ trợ phát video.
+            </video>
+            </p>
             <p><strong>Cốt truyện:</strong> {selectedProduct.story}</p>
             <div className="flex justify-end mt-4">
               <button onClick={() => setSelectedProduct(null)} className="bg-gray-300 px-4 py-2 rounded">
@@ -271,8 +291,8 @@ export default function ProductsPage() {
                   <img src={product.image} alt={product.name} className="w-16 h-16 rounded" />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">{product.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{product.releaseDate}</td>
-                <td className="px-6 py-4 whitespace-nowrap">${product.price.toFixed(2)}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{new Date(product.releaseDate).toLocaleDateString('en-GB')}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{formatVND(product.price)}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button onClick={() => handleViewDetails(product)} className="text-green-600 hover:text-green-900 mr-2">
                     <FaEye />
@@ -280,7 +300,7 @@ export default function ProductsPage() {
                   <button onClick={() => handleEdit(product)} className="text-blue-600 hover:text-blue-900 mr-2">
                     <FaEdit />
                   </button>
-                  <button onClick={() => handleDelete(product.id)} className="text-red-600 hover:text-red-900">
+                  <button onClick={() => handleDelete(product._id)} className="text-red-600 hover:text-red-900">
                     <FaTrash />
                   </button>
                 </td>

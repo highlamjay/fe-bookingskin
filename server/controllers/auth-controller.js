@@ -315,19 +315,39 @@ const fetchDetailUser = async (req, res) => {
 //fetch all user controller
 const fetchAllUser = async (req, res) => {
     try {
-        // Lấy tất cả user từ database, loại bỏ trường password
-        const users = await User.find({}, '-password');
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 6;
+        const skip = (page - 1) * limit;
+
+        const sortBy = req.query.sortBy || 'createdAt';
+        const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
+        const totalUsers = await User.countDocuments({ role: 'user'});
+        const totalPages = Math.ceil(totalUsers / limit);
+
+        const sortObject = {};
+        sortObject[sortBy] = sortOrder;
+
+        const users = await User.find({role: "user"}).sort(sortObject).skip(skip).limit(limit);
+        if(!users){
+            return res.status(400).json({
+                success: false,
+                message: 'Users not found ! Please try again !'
+            })
+        }
 
         res.status(200).json({
             success: true,
-            message: 'Users fetched successfully!',
+            message: 'Users fetched successfully !',
+            currentPage: page,
+            totalPages: totalPages,
+            totalUsers: totalUsers,
             data: users
         });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
+        console.error(error);
+        return res.status(500).json({
             success: false,
-            message: 'Internal server error! Please try again!'
+            message: "Internal server error",
         });
     }
 };

@@ -46,7 +46,7 @@ const fetchAllPosts = async (req, res) => {
 
         const sortBy = req.query.sortBy || 'createdAt';
         const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
-        const totalPosts = await Post.countDocuments();
+        const totalPosts = await Post.countDocuments({ isDeleted: false });
         const totalPages = Math.ceil(totalPosts / limit);
 
         const sortObject = {};
@@ -166,7 +166,6 @@ const editPost = async (req, res) => {
 const deletePost = async (req, res) => {
     try {
         const id  = req.params.id;
-        console.log(id);
 
         //check post exist
         const post = await Post.findById(id);
@@ -178,7 +177,8 @@ const deletePost = async (req, res) => {
         }
 
         //delete post
-        await Post.findByIdAndDelete(id);
+        post.isDeleted = true;
+        await post.save();
 
         res.status(200).json({
             success: true,

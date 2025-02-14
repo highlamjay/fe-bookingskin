@@ -1,24 +1,29 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import Pagination from '../Pagination'
-
-const mockCustomers = [
-  { id: 1, name: 'John Doe', username: 'johndoe', email: 'john@example.com', registeredDate: '2023-01-15', totalOrders: 5, image: 'link_to_image_1' },
-  { id: 2, name: 'Jane Smith', username: 'janesmith', email: 'jane@example.com', registeredDate: '2023-02-20', totalOrders: 3, image: 'link_to_image_2' },
-  { id: 3, name: 'Bob Johnson', username: 'bobjohnson', email: 'bob@example.com', registeredDate: '2023-03-10', totalOrders: 7, image: 'link_to_image_3' },
-  // Thêm các khách hàng khác nếu cần
-]
+import { fetchAllUser } from '../../services/auth-service'
 
 export default function CustomersPage() {
-  const [customers, setCustomers] = useState(mockCustomers)
+  const [customers, setCustomers] = useState([])
   const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
   const customersPerPage = 6
-  const [newCustomer, setNewCustomer] = useState({ name: '', username: '', email: '', registeredDate: '', totalOrders: '', image: '' })
+  const [newCustomer, setNewCustomer] = useState(
+    { name: '', 
+      username: '', 
+      email: '', 
+      createdAt: '', 
+      totalOrders: '', 
+      image: '' 
+    })
+  
+  const [refresh, setRefresh] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalUsers, setTotalUsers] = useState(0)
 
   const handleEdit = (customer) => {
     setNewCustomer(customer)
@@ -42,7 +47,7 @@ export default function CustomersPage() {
       const newCustomerWithId = { ...newCustomer, id: customers.length + 1 }
       setCustomers([...customers, newCustomerWithId])
     }
-    setNewCustomer({ name: '', username: '', email: '', registeredDate: '', totalOrders: '', image: '' })
+    setNewCustomer({ name: '', username: '', email: '', createdAt: '', totalOrders: '', image: '' })
     setIsEditing(false)
     setIsModalOpen(false)
   }
@@ -50,6 +55,21 @@ export default function CustomersPage() {
   const indexOfLastCustomer = currentPage * customersPerPage
   const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage
   const currentCustomers = customers.slice(indexOfFirstCustomer, indexOfLastCustomer)
+
+  useEffect(() => {
+    fetchUsers();
+  }, [currentPage, refresh])
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetchAllUser(currentPage, customersPerPage)
+      setCustomers(response.data)
+      setTotalPages(response.totalPages)
+      setTotalUsers(response.totalUsers)
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
+    }
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -69,14 +89,14 @@ export default function CustomersPage() {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {currentCustomers.map((customer) => (
-              <tr key={customer.id}>
+              <tr key={customer._id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <img src={customer.image} alt={customer.name} className="w-16 h-16 rounded-full" />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">{customer.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{customer.username}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{customer.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{customer.registeredDate}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{new Date(customer.createdAt).toLocaleDateString("en-GB")}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{customer.totalOrders}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button onClick={() => handleViewDetails(customer)} className="text-green-600 hover:text-green-900 mr-2">
@@ -170,7 +190,7 @@ export default function CustomersPage() {
             <img src={selectedCustomer.image} alt={selectedCustomer.name} className="w-full mb-4" />
             <p><strong>Username:</strong> {selectedCustomer.username}</p>
             <p><strong>Email:</strong> {selectedCustomer.email}</p>
-            <p><strong>Ngày đăng ký:</strong> {selectedCustomer.registeredDate}</p>
+            <p><strong>Ngày đăng ký:</strong> {new Date(selectedCustomer.createdAt).toLocaleDateString("en-GB")}</p>
             <p><strong>Tổng số đơn hàng:</strong> {selectedCustomer.totalOrders}</p>
             <div className="flex justify-end mt-4">
               <button onClick={() => setSelectedCustomer(null)} className="bg-gray-300 px-4 py-2 rounded">
