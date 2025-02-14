@@ -40,16 +40,6 @@ export const forgotPassword = async (email, data) => {
   }
 };
 
-export const fetchAllUser = async () => {
-  try {
-      const response = await axios.get(`${API_KEY}/auth/fetch-all`);
-      return response.data;
-  } catch (error) {
-      console.error("Failed to fetch all users", error);
-      throw error;
-  }
-};
-
 export const fetchDetailUser = async (id, access_token) => {
   try {
     const response = await axiosJWT.get(`${API_KEY}/auth/fetch-detail/${id}`, {
